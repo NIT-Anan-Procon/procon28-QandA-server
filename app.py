@@ -16,8 +16,6 @@ from datetime import datetime as dt
 from datetime import timedelta
 import random
 
-from revgeocoder import ReverseGeocoder
-
 app = Flask(__name__)
 
 class Record:
