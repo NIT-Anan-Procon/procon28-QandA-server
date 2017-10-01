@@ -124,7 +124,8 @@ def post_back():
     scenario = ""
 
     try:
-        index = str(random.randint(0, 100))
+
+        QRindex = str(random.randint(0, 100))
         f = open('tmp/text' + index + '.txt', 'w')
         num = int(json_data['len'])
         print(num)
@@ -172,7 +173,7 @@ def post_back():
 
         for q in questions:
             print(q)
-        return str(index)
+        return str(QRindex)
 
     except:
         return "NG"
