@@ -47,21 +47,10 @@ def callback():
     return 'aaaaaa feature'
 
 
-'''
-@app.route("/get", methods=['GET'])
-def get():
-    message = []
-    message.append("*** get_proc *** start ***")
-    message.append("request.method = " + request.method)
-    message.append("request.args.get aa = " + request.args.get('Aa',""))
-    message.append("request.args.get bb = " + request.args.get('bb',""))
-    message.append("request.args.get cc = " + request.args.get('cc',""))
-    message.append("*** get_proc *** end ***")
-#
-    str_out = json.dumps(message)
+@app.route("/certification/<int:getid>", methods=['GET'])
+def certification(getid):
+    return 'Thanks get: id = %s' % getid
 
-    return str_out
-'''
 
 @app.route("/post", methods=['POST'])
 def post_back():
@@ -116,13 +105,6 @@ def post_back():
         value += str(r) + "\n"
 
     return value
-
-
-@app.route("/certification/<int:getid>")
-def certification(getid):
-    return 'Thanks get: id = %s' % getid
-
-
 
 
 if __name__ == "__main__":
