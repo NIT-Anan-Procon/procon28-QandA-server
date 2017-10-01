@@ -60,7 +60,12 @@ def callback():
 @app.route("/certification/<int:getid>", methods=['GET'])
 def certification(getid):
     #return 'Thanks get: id = %s' % getid
-    return render_template('certification.html')
+
+    f = open("tmp/text.txt", "r")
+    message = f.readline().split("\n")[0]
+    message = dt.strptime(message, '%Y.%m.%d %H:%M:%S').strftime('%Y年%m月%d日 %H時%M分')
+    
+    return render_template('certification.html', start_at=message)
 
 def read_scenario(scenario):
     print("data reader")
@@ -109,7 +114,7 @@ def post_back():
     scenario = ""
 
     #try:
-    f = open('text.txt', 'w')
+    f = open('tmp/text.txt', 'w')
     num = int(json_data['len'])
     print(num)
 

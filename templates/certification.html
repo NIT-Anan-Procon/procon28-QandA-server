@@ -29,8 +29,10 @@
             </FONT>
         </Div>
         <Div Align="right">
-                2017年10月01日 14時46分 開始<br>
-                2017年10月01日 14時55分 発行<br>
+            <script>
+                var someJavaScriptVar = "{{ start_at }}";
+                document.write(someJavaScriptVar + " 開始")
+            </script>
         </Div>
         <Div Align="left">
            // 場所：ー (東経0度、北緯0度)
@@ -40,20 +42,8 @@
             以下の問診結果になりました<br>
 
             <script type="text/javascript">
+                var someJavaScriptVar = "{{ message }}";
 
-                document.write("hoge1")
-                var reader = new FileReader();
-                document.write("hoge2")
-                var file = new File("./text.txt")
-                document.write("hoge3")
-                reader.readAsText(file);
-                //reader.onload = function(e){
-                //    console.log(reader.result);
-                //};
-
-                reader.onload = function(ev){
-                   document.write(reader.result);
-                }
             </script>
 
             <table CLASS="table2">
