@@ -12,6 +12,7 @@ import csv
 import requests
 from datetime import datetime as dt
 from datetime import timedelta
+import random
 
 app = Flask(__name__)
 
@@ -61,7 +62,7 @@ def callback():
 def certification(getid):
     #return 'Thanks get: id = %s' % getid
 
-    f = open("tmp/text.txt", "r")
+    f = open('tmp/text' + str(getid) + '.txt', "r")
     message = f.readline().split("\n")[0]
     message = dt.strptime(message, '%Y.%m.%d %H:%M:%S').strftime('%Y年%m月%d日 %H時%M分')
     
@@ -123,7 +124,8 @@ def post_back():
     scenario = ""
 
     try:
-        f = open('tmp/text.txt', 'w')
+        index = str(random.randint(0, 10))
+        f = open('tmp/text' + index + '.txt', 'w')
         num = int(json_data['len'])
         print(num)
 
