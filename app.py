@@ -123,60 +123,60 @@ def post_back():
     questions = []
     scenario = ""
 
-    try:
+    #try:
 
-        QRindex = str(random.randint(0, 100))
-        f = open('tmp/text' + index + '.txt', 'w')
-        num = int(json_data['len'])
-        print(num)
+    QRindex = str(random.randint(0, 100))
+    f = open('tmp/text' + QRindex + '.txt', 'w')
+    num = int(json_data['len'])
+    print(num)
 
-        value = ""
+    value = ""
 
-        for i in range(num):
-            key = "record" + str(i)
-            print("key is " + key)
-            record = json_data[key]
-            """
-            res = ""
-            res += record["time"] + " " + record["tag"] + " " + record["val"]
-            print(res)
-            value += res + "\n"
-            """
+    for i in range(num):
+        key = "record" + str(i)
+        print("key is " + key)
+        record = json_data[key]
+        """
+        res = ""
+        res += record["time"] + " " + record["tag"] + " " + record["val"]
+        print(res)
+        value += res + "\n"
+        """
 
-            r = Record(record)
+        r = Record(record)
 
-            if r.is_head():
-                f.write(r.time + "\n")
-            elif r.is_scenario():
-                if r.tag == 0:
-                    scenario = 'scenarios/ill.csv'
-                else:
-                    scenario = 'scenarios/injury.csv'
-                print(scenario)
-                whole_questions = read_scenario(scenario)
-            elif r.is_location():
-                pass
+        if r.is_head():
+            f.write(r.time + "\n")
+        elif r.is_scenario():
+            if r.tag == 0:
+                scenario = 'scenarios/ill.csv'
             else:
-                try:
-                    index = int(r.tag)
-                    questions.append(whole_questions[index][1] + "," + get_answer(r.value))
-                    records.append(r)
-                    print(str(r))
-                    #value += str(r) + "\n"
-                    value += whole_questions[index][1] + "," + get_answer(r.value) + "\n"
-                    print("")
+                scenario = 'scenarios/injury.csv'
+            print(scenario)
+            whole_questions = read_scenario(scenario)
+        elif r.is_location():
+            pass
+        else:
+            try:
+                index = int(r.tag)
+                questions.append(whole_questions[index][1] + "," + get_answer(r.value))
+                records.append(r)
+                print(str(r))
+                #value += str(r) + "\n"
+                value += whole_questions[index][1] + "," + get_answer(r.value) + "\n"
+                print("")
 
-                except:
-                    pass
-        f.write(value)
-        f.close()
+            except:
+                pass
+    f.write(value)
+    f.close()
 
-        for q in questions:
-            print(q)
-        return str(QRindex)
+    for q in questions:
+        print(q)
+    return str(QRindex)
 
-    except:
-        return "NG"
+    #except:
+    #    return "NG"
 
 if __name__ == "__main__":
     arg_parser = ArgumentParser(
