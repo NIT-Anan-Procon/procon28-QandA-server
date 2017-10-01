@@ -65,7 +65,16 @@ def certification(getid):
     message = f.readline().split("\n")[0]
     message = dt.strptime(message, '%Y.%m.%d %H:%M:%S').strftime('%Y年%m月%d日 %H時%M分')
     
-    return render_template('certification.html', start_at=message)
+
+    conts = f.readlines()
+    contents = ""
+    for content in conts:
+        content = content.split("\n")[0]
+        print(content)
+        contents += content + ":"
+    print(contents)
+
+    return render_template('certification.html', start_at=message, num=getid, contents=contents)
 
 def read_scenario(scenario):
     print("data reader")
@@ -100,7 +109,7 @@ def post_back():
     print('type(data)', type(request.data))
     print('method)', request.method)
     print('get_json', request.get_json)
-    #print('is_json', request.is_json)
+    print('is_json', request.is_json)
 
     #bytes -> str(json) -> dict
     bytes_data = request.data  # bytes配列

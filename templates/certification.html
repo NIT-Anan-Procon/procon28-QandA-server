@@ -35,7 +35,7 @@
             </script>
         </Div>
         <Div Align="left">
-           // 場所：ー (東経0度、北緯0度)
+            場所：ー (東経0度、北緯0度)
         </Div>
         <Div Align="center">
             <br><br>
@@ -43,11 +43,22 @@
 
             <script type="text/javascript">
                 var someJavaScriptVar = "{{ message }}";
-
             </script>
 
             <table CLASS="table2">
 
+                <script type="text/javascript">
+                    var num = "{{ num }}"
+                    var content = "{{ contents }}"
+                    contents = content.split(":")
+                    for (var i = 0; i < contents.length-1; i++) {
+                        var question = contents[i].split(",")
+                        document.write("<tr>");
+                        document.write("<td>" + question[0] + "</td>");
+                        document.write("<td>" + question[1] + "</td>");
+                        document.write("</tr>");
+                    }
+                </script>
                 <!--
                 <tr>
                     <td>意識はありますか</td>
