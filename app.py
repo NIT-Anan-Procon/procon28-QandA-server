@@ -124,7 +124,7 @@ def post_back():
     scenario = ""
 
     try:
-        index = str(random.randint(0, 10))
+        index = str(random.randint(0, 100))
         f = open('tmp/text' + index + '.txt', 'w')
         num = int(json_data['len'])
         print(num)
