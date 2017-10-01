@@ -4,6 +4,8 @@ from __future__ import unicode_literals
 from argparse import ArgumentParser
 from flask import Flask, request, render_template, abort, send_from_directory, render_template
 import json
+import urllib.request
+
 
 import os
 import sys
@@ -14,10 +16,9 @@ from datetime import datetime as dt
 from datetime import timedelta
 import random
 
+from revgeocoder import ReverseGeocoder
+
 app = Flask(__name__)
-
-
-
 
 class Record:
     
@@ -54,7 +55,10 @@ def index():
 
 @app.route("/callback", methods=['GET'])
 def callback():
-
+    with urllib.request.urlopen("https://maps.googleapis.com/maps/api/geocode/json?latlng=33.914153,134.667149&sensor=false&language=ja") as res:
+        html = res.read().decode("utf-8")
+        html = json.loads(html)['results'][0]['formatted_address']
+        print(html)
     return 'aaaaaa feature'
 
 
@@ -155,6 +159,11 @@ def post_back():
             print(scenario)
             whole_questions = read_scenario(scenario)
         elif r.is_location():
+            latlng = map(float, r.tag.split(":"))
+            with urllib.request.urlopen("https://maps.googleapis.com/maps/api/geocode/json?latlng=" + latlng[0] + "," + latlng[1] + "&sensor=false&language=ja") as res:
+                html = res.read().decode("utf-8")
+                html = json.loads(html)['results'][0]['formatted_address']
+                print(html)
             pass
         else:
             try:
