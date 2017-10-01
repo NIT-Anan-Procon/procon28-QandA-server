@@ -1,0 +1,57 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Document</title>
+    </head>
+    <style type="text/css">
+        <!-- 
+
+        .table2 { 
+            width: 400px; /* テーブルの横幅 */ 
+            border-collapse: collapse; /* 枠線の表示方法 */ 
+            border: 1px #1C79C6 solid; /* テーブル全体の枠線（太さ・色・スタイル） */ 
+            background-color: #FFFFFF; /* 背景色 */ 
+        } 
+
+        .table2 TD { 
+            border: 1px #1C79C6 solid; /* セルの枠線（太さ・色・スタイル） */
+        } 
+
+        --> 
+    </style>
+    <body>
+        <Div Align="center">
+            <p>診断書</p>
+
+            以下の問診結果になりました
+            <table CLASS="table2">
+                <tr>
+                    <td>意識はありますか</td>
+                    <td>はい</td>
+                </tr>
+                <tr>
+                    <td>出血はありますか</td>
+                    <td>いいえ</td>
+                </tr>
+                <tr>
+                    <td>のどは痛いですか</td>
+                    <td>わからない</td>
+                </tr>
+            </table>
+            以下の応急手当を行いました
+            <table CLASS="table2">
+                <script type="text/javascript">
+                
+                    for (var i = 0; i < 10; i++) {
+                        document.write("<tr>");
+                        document.write("<td>胸骨圧迫</td>");
+                        document.write("<td>10秒</td>");
+                        document.write("</tr>");
+                    }
+                </script>
+            </table>
+        </Div>
+    </body>
+</html>

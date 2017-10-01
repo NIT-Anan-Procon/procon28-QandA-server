@@ -37,9 +37,8 @@ class Record:
 @app.route("/")
 def index():
     #return 'hogehoge'
-    return "AAA!"
-    #return render_template('index.html', message="moririn dayo")
-
+    #return "AAA!"
+    return render_template('index.html', message="moririn dayo")
 
 @app.route("/callback", methods=['GET'])
 def callback():
@@ -49,7 +48,8 @@ def callback():
 
 @app.route("/certification/<int:getid>", methods=['GET'])
 def certification(getid):
-    return 'Thanks get: id = %s' % getid
+    #return 'Thanks get: id = %s' % getid
+    return render_template('certification.html')
 
 
 @app.route("/post", methods=['POST'])
@@ -84,6 +84,9 @@ def post_back():
     str_out = json.dumps(message)    
     return str_out
     '''
+
+    records = []
+
     try:
         num = int(json_data['len'])
         print(num)
@@ -102,6 +105,7 @@ def post_back():
             """
 
             r = Record(record)
+            records.append(r)
             print(str(r))
             value += str(r) + "\n"
             print("")
