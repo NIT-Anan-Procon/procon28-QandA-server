@@ -122,58 +122,58 @@ def post_back():
     questions = []
     scenario = ""
 
-    #try:
-    f = open('tmp/text.txt', 'w')
-    num = int(json_data['len'])
-    print(num)
+    try:
+        f = open('tmp/text.txt', 'w')
+        num = int(json_data['len'])
+        print(num)
 
-    value = ""
+        value = ""
 
-    for i in range(num):
-        key = "record" + str(i)
-        print("key is " + key)
-        record = json_data[key]
-        """
-        res = ""
-        res += record["time"] + " " + record["tag"] + " " + record["val"]
-        print(res)
-        value += res + "\n"
-        """
+        for i in range(num):
+            key = "record" + str(i)
+            print("key is " + key)
+            record = json_data[key]
+            """
+            res = ""
+            res += record["time"] + " " + record["tag"] + " " + record["val"]
+            print(res)
+            value += res + "\n"
+            """
 
-        r = Record(record)
+            r = Record(record)
 
-        if r.is_head():
-            f.write(r.time + "\n")
-        elif r.is_scenario():
-            if r.tag == 0:
-                scenario = 'scenarios/ill.csv'
-            else:
-                scenario = 'scenarios/injury.csv'
-            print(scenario)
-            whole_questions = read_scenario(scenario)
-        elif r.is_location():
-            pass
-        else:
-            try:
-                index = int(r.tag)
-                questions.append(whole_questions[index][1] + "," + get_answer(r.value))
-                records.append(r)
-                print(str(r))
-                #value += str(r) + "\n"
-                value += whole_questions[index][1] + "," + get_answer(r.value) + "\n"
-                print("")
-
-            except:
+            if r.is_head():
+                f.write(r.time + "\n")
+            elif r.is_scenario():
+                if r.tag == 0:
+                    scenario = 'scenarios/ill.csv'
+                else:
+                    scenario = 'scenarios/injury.csv'
+                print(scenario)
+                whole_questions = read_scenario(scenario)
+            elif r.is_location():
                 pass
-    f.write(value)
-    f.close()
+            else:
+                try:
+                    index = int(r.tag)
+                    questions.append(whole_questions[index][1] + "," + get_answer(r.value))
+                    records.append(r)
+                    print(str(r))
+                    #value += str(r) + "\n"
+                    value += whole_questions[index][1] + "," + get_answer(r.value) + "\n"
+                    print("")
 
-    for q in questions:
-        print(q)
-    return "OK"
+                except:
+                    pass
+        f.write(value)
+        f.close()
 
-    #except:
-    #    return "NG"
+        for q in questions:
+            print(q)
+        return "7"
+
+    except:
+        return "NG"
 
 if __name__ == "__main__":
     arg_parser = ArgumentParser(
