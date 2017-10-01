@@ -22,13 +22,13 @@ class Record:
     
     def __init__(self, record):
         print(record)
-        self.time = int(record['time'])
+        self.time = record['time']
         self.tag = record['tag']
         self.value = record['val']
 
     def __str__(self):
         res = "record -> "
-        res += "time:" + str(self.time) 
+        res += "time:" + self.time
         res += ", tag:" + self.tag 
         res += ", value:" + self.value
         return res
@@ -84,28 +84,32 @@ def post_back():
     str_out = json.dumps(message)    
     return str_out
     '''
-    
-    num = int(json_data['len'])
-    print(num)
+    try:
+        num = int(json_data['len'])
+        print(num)
 
-    value = ""
-    
-    for i in range(num):
-        key = "record" + str(i)
-        record = json_data[key]
-        """
-        res = ""
-        res += record["time"] + " " + record["tag"] + " " + record["val"]
-        print(res)
-        value += res + "\n"
-        """
+        value = ""
 
-        r = Record(record)
-        print(str(r))
-        value += str(r) + "\n"
+        for i in range(num):
+            key = "record" + str(i)
+            print("key is " + key)
+            record = json_data[key]
+            """
+            res = ""
+            res += record["time"] + " " + record["tag"] + " " + record["val"]
+            print(res)
+            value += res + "\n"
+            """
 
-    return value
+            r = Record(record)
+            print(str(r))
+            value += str(r) + "\n"
+            print("")
 
+        return "OK"
+
+    except:
+        return "NG"
 
 if __name__ == "__main__":
     arg_parser = ArgumentParser(
