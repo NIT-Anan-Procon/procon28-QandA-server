@@ -25,7 +25,7 @@ def index():
 @app.route("/callback", methods=['GET'])
 def callback():
 
-    return 'aaaaaa'
+    return 'aaaaaa feature'
 
 
 @app.route("/get", methods=['GET'])
