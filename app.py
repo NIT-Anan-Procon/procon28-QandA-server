@@ -2,7 +2,7 @@
 
 from __future__ import unicode_literals
 from argparse import ArgumentParser
-from flask import Flask, request, render_template, abort, send_from_directory
+from flask import Flask, request, render_template, abort, send_from_directory, render_template
 import json
 
 import os
@@ -18,6 +18,7 @@ app = Flask(__name__)
 @app.route("/")
 def index():
     #return 'hogehoge'
+    #return "AAA!"
     return render_template('index.html', message="moririn dayo")
 
 
