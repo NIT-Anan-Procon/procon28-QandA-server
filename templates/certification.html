@@ -24,18 +24,41 @@
     </style>
     <body>
         <Div Align="center">
-            <p>診断書</p>
+            <FONT SIZE=5>
+                <b><p>診断書</p></b>
+            </FONT>
         </Div>
         <Div Align="right">
                 2017年10月01日 14時46分 開始<br>
                 2017年10月01日 14時55分 発行<br>
         </Div>
         <Div Align="left">
-            場所：ー (東経0度、北緯0度)
+           // 場所：ー (東経0度、北緯0度)
         </Div>
         <Div Align="center">
-            以下の問診結果になりました
+            <br><br>
+            以下の問診結果になりました<br>
+
+            <script type="text/javascript">
+
+                document.write("hoge1")
+                var reader = new FileReader();
+                document.write("hoge2")
+                var file = new File("./text.txt")
+                document.write("hoge3")
+                reader.readAsText(file);
+                //reader.onload = function(e){
+                //    console.log(reader.result);
+                //};
+
+                reader.onload = function(ev){
+                   document.write(reader.result);
+                }
+            </script>
+
             <table CLASS="table2">
+
+                <!--
                 <tr>
                     <td>意識はありますか</td>
                     <td>はい</td>
@@ -48,7 +71,9 @@
                     <td>のどは痛いですか</td>
                     <td>わからない</td>
                 </tr>
+                -->
             </table>
+            <br><br><br>
             以下の応急手当を行いました
             <table CLASS="table2">
                 <script type="text/javascript">

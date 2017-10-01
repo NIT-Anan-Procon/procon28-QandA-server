@@ -8,10 +8,10 @@ import json
 import os
 import sys
 import time
+import csv
 import requests
-from datetime import datetime
+from datetime import datetime as dt
 from datetime import timedelta
-
 
 app = Flask(__name__)
 
@@ -23,6 +23,7 @@ class Record:
     def __init__(self, record):
         print(record)
         self.time = record['time']
+        self.tdatetime = dt.strptime(self.time, '%Y.%m.%d %H:%M:%S')
         self.tag = record['tag']
         self.value = record['val']
 
@@ -32,6 +33,16 @@ class Record:
         res += ", tag:" + self.tag 
         res += ", value:" + self.value
         return res
+
+    def is_head(self):
+        return self.tag == "start"
+
+    def is_scenario(self):
+        return self.tag == "sce"
+
+    def is_location(self):
+        return self.tag == "loc"
+
 
 
 @app.route("/")
@@ -50,6 +61,25 @@ def callback():
 def certification(getid):
     #return 'Thanks get: id = %s' % getid
     return render_template('certification.html')
+
+def read_scenario(scenario):
+    print("data reader")
+
+    questions = []
+    with open(scenario,  newline='') as f:
+        dataReader = csv.reader(f)
+        for row in dataReader:
+            print(row)
+            questions.append(row)
+    return questions[1:]
+
+def get_answer(answer):
+    if answer == "Y":
+        return "はい"
+    elif answer == "N":
+        return "いいえ"
+    else:
+        return "わからない"
 
 
 @app.route("/post", methods=['POST'])
@@ -73,47 +103,63 @@ def post_back():
     #print('str_data', type(str_data), str_data)
     json_data = json.loads(str_data)
 
-    '''
-    message = []
-    message.append("*** post_proc *** start ***")
-    message.append("request.method = " + request.method)
-    message.append("request.form = " + json.dumps(request.form))
-    message.append("request.form = " + request.form[''])
-    message.append("*** post_proc *** end ***")
-
-    str_out = json.dumps(message)    
-    return str_out
-    '''
-
     records = []
+    whole_questions = []
+    questions = []
+    scenario = ""
 
-    try:
-        num = int(json_data['len'])
-        print(num)
+    #try:
+    f = open('text.txt', 'w')
+    num = int(json_data['len'])
+    print(num)
 
-        value = ""
+    value = ""
 
-        for i in range(num):
-            key = "record" + str(i)
-            print("key is " + key)
-            record = json_data[key]
-            """
-            res = ""
-            res += record["time"] + " " + record["tag"] + " " + record["val"]
-            print(res)
-            value += res + "\n"
-            """
+    for i in range(num):
+        key = "record" + str(i)
+        print("key is " + key)
+        record = json_data[key]
+        """
+        res = ""
+        res += record["time"] + " " + record["tag"] + " " + record["val"]
+        print(res)
+        value += res + "\n"
+        """
 
-            r = Record(record)
-            records.append(r)
-            print(str(r))
-            value += str(r) + "\n"
-            print("")
+        r = Record(record)
 
-        return "OK"
+        if r.is_head():
+            f.write(r.time + "\n")
+        elif r.is_scenario():
+            if r.tag == 0:
+                scenario = 'scenarios/ill.csv'
+            else:
+                scenario = 'scenarios/injury.csv'
+            print(scenario)
+            whole_questions = read_scenario(scenario)
+        elif r.is_location():
+            pass
+        else:
+            try:
+                index = int(r.tag)
+                questions.append(whole_questions[index][1] + "," + get_answer(r.value))
+                records.append(r)
+                print(str(r))
+                #value += str(r) + "\n"
+                value += whole_questions[index][1] + "," + get_answer(r.value) + "\n"
+                print("")
 
-    except:
-        return "NG"
+            except:
+                pass
+    f.write(value)
+    f.close()
+
+    for q in questions:
+        print(q)
+    return "OK"
+
+    #except:
+    #    return "NG"
 
 if __name__ == "__main__":
     arg_parser = ArgumentParser(
