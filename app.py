@@ -73,17 +73,17 @@ def certification(getid):
 
     conts = f.readlines()
     contents = ""
-    for content in conts:
+    for content in conts[:len(conts)-1]:
         content = content.split("\n")[0]
         print(content)
         contents += content + ":"
     print(contents)
+    address = conts[len(conts)-1]
+    print(address)
 
-    return render_template('certification.html', start_at=message, num=getid, contents=contents)
+    return render_template('certification.html', start_at=message, num=getid, contents=contents, address=address)
 
 def read_scenario(scenario):
-    print("data reader")
-
     questions = []
     with open(scenario,  newline='') as f:
         dataReader = csv.reader(f)
@@ -100,6 +100,15 @@ def get_answer(answer):
     else:
         return "わからない"
 
+def dms_location(degree):
+    degree = float(degree)
+    degree += 1/3600/2
+    deg = int(degree)
+    text = str(deg) + "度"
+    minute = int((degree - int(degree))*60)
+    text += str(minute) + "分"
+    text += str(int(((degree - deg) * 60 - minute) * 60)) + "秒"
+    return text
 
 @app.route("/post", methods=['POST'])
 def post_back():
@@ -135,6 +144,7 @@ def post_back():
     print(num)
 
     value = ""
+    html = "-"
 
     for i in range(num):
         key = "record" + str(i)
@@ -148,21 +158,23 @@ def post_back():
         """
 
         r = Record(record)
-
+        print(str(r))
         if r.is_head():
             f.write(r.time + "\n")
         elif r.is_scenario():
-            if r.tag == 0:
+            if r.value == "0":
                 scenario = 'scenarios/ill.csv'
             else:
                 scenario = 'scenarios/injury.csv'
             print(scenario)
             whole_questions = read_scenario(scenario)
         elif r.is_location():
-            latlng = map(float, r.tag.split(":"))
+            latlng = r.value.split(":")
             with urllib.request.urlopen("https://maps.googleapis.com/maps/api/geocode/json?latlng=" + latlng[0] + "," + latlng[1] + "&sensor=false&language=ja") as res:
                 html = res.read().decode("utf-8")
                 html = json.loads(html)['results'][0]['formatted_address']
+                html += "(東経:" + dms_location(latlng[1])
+                html += ", 北緯:" + dms_location(latlng[0]) + ")"
                 print(html)
             pass
         else:
@@ -178,6 +190,8 @@ def post_back():
             except:
                 pass
     f.write(value)
+    if not html == "":
+        f.write(html)
     f.close()
 
     for q in questions:
