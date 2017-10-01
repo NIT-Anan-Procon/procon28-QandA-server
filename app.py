@@ -12,14 +12,33 @@ import requests
 from datetime import datetime
 from datetime import timedelta
 
+
 app = Flask(__name__)
+
+
+
+
+class Record:
+    
+    def __init__(self, record):
+        print record
+        self.time = int(record['time'])
+        self.tag = record['tag']
+        self.value = record['val']
+
+    def __str__(self):
+        res = "record -> "
+        res += "time:" + str(self.time) 
+        res += ", tag:" + self.tag 
+        res += ", value:" + self.value
+        return res
 
 
 @app.route("/")
 def index():
     #return 'hogehoge'
-    #return "AAA!"
-    return render_template('index.html', message="moririn dayo")
+    return "AAA!"
+    #return render_template('index.html', message="moririn dayo")
 
 
 @app.route("/callback", methods=['GET'])
@@ -28,6 +47,7 @@ def callback():
     return 'aaaaaa feature'
 
 
+'''
 @app.route("/get", methods=['GET'])
 def get():
     message = []
@@ -41,7 +61,7 @@ def get():
     str_out = json.dumps(message)
 
     return str_out
-
+'''
 
 @app.route("/post", methods=['POST'])
 def post_back():
@@ -80,17 +100,29 @@ def post_back():
     print(num)
 
     value = ""
+    
     for i in range(num):
-        res = ""
         key = "record" + str(i)
-        print(json_data[key])
         record = json_data[key]
+        """
+        res = ""
         res += record["time"] + " " + record["tag"] + " " + record["val"]
         print(res)
         value += res + "\n"
+        """
 
+        r = Record(record)
+        print(str(r))
+        value += str(r) + "\n"
 
     return value
+
+
+@app.route("/certification/<int:getid>")
+def certification(getid):
+    return 'Thanks get: id = %s' % getid
+
+
 
 
 if __name__ == "__main__":
