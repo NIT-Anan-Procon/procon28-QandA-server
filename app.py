@@ -21,7 +21,7 @@ app = Flask(__name__)
 class Record:
     
     def __init__(self, record):
-        print record
+        print(record)
         self.time = int(record['time'])
         self.tag = record['tag']
         self.value = record['val']
