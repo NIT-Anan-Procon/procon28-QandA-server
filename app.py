@@ -55,7 +55,7 @@ def post_back():
     print('type(data)', type(request.data))
     print('method)', request.method)
     print('get_json', request.get_json)
-    print('is_json', request.is_json)
+    #print('is_json', request.is_json)
 
     #bytes -> str(json) -> dict
     bytes_data = request.data  # bytes配列
@@ -74,7 +74,22 @@ def post_back():
     str_out = json.dumps(message)    
     return str_out
     '''
-    return json_data['key']
+    
+    num = int(json_data['len'])
+    print(num)
+
+    value = ""
+    for i in range(num):
+        res = ""
+        key = "record" + str(i)
+        print(json_data[key])
+        record = json_data[key]
+        res += record["time"] + " " + record["tag"] + " " + record["val"]
+        print(res)
+        value += res + "\n"
+
+
+    return value
 
 
 if __name__ == "__main__":
