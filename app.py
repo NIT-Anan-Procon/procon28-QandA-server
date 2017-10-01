@@ -172,7 +172,7 @@ def post_back():
 
         for q in questions:
             print(q)
-        return "7"
+        return str(index)
 
     except:
         return "NG"
