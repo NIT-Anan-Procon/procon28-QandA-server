@@ -49,6 +49,9 @@ class Record:
     def is_care(self):
         return self.tag == "Care"
 
+    def is_tail(self):
+        return self.tag == "end"
+
 
 
 @app.route("/")
@@ -71,10 +74,11 @@ def certification(getid):
     #return 'Thanks get: id = %s' % getid
 
     f = open('tmp/text' + str(getid) + '.txt', "r")
-    message = f.readline().split("\n")[0]
-    message = dt.strptime(message, '%Y.%m.%d %H:%M:%S').strftime('%Y年%m月%d日 %H時%M分')
+    start_at = f.readline().split("\n")[0]
+    start_at = dt.strptime(start_at, '%Y.%m.%d %H:%M:%S').strftime('%Y年%m月%d日 %H時%M分')
+    end_at = f.readline().split("\n")[0]
+    end_at = dt.strptime(end_at, '%Y.%m.%d %H:%M:%S').strftime('%Y年%m月%d日 %H時%M分')
     
-
     conts = f.readlines()
     contents = ""
     cares = ""
@@ -88,20 +92,20 @@ def certification(getid):
             print("find care")
             is_care = True
         else:
+
             contents += content + ":"
     print(contents)
     print(cares)
     address = conts[len(conts)-1]
     print(address)
 
-    return render_template('certification.html', start_at=message, num=getid, contents=contents, address=address, cares=cares)
+    return render_template('certification.html', start_at=start_at, end_at=end_at, num=getid, contents=contents, address=address, cares=cares)
 
 def read_scenario(scenario):
     questions = []
     with open(scenario,  newline='') as f:
         dataReader = csv.reader(f)
         for row in dataReader:
-            print(row)
             questions.append(row)
     return questions[1:]
 
@@ -110,7 +114,6 @@ def read_carelist():
     with open("scenarios/carelist_v00.csv", newline='') as f:
         dataReader = csv.reader(f)
         for row in dataReader:
-            print(row[1])
             cares.append(row[1])
     return cares
 
@@ -165,6 +168,8 @@ def post_back():
     QRindex = str(random.randint(0, 100))
     f = open('tmp/text' + QRindex + '.txt', 'w')
     num = int(json_data['len'])
+    end = json_data['end']['time']
+    print("end at " +end)
     print(num)
 
     value = ""
@@ -186,7 +191,11 @@ def post_back():
 
         r = Record(record)
         print(str(r))
+        print("tag is " + r.tag)
         if r.is_head():
+            f.write(r.time + "\n")
+            f.write(end + "\n")
+        elif r.is_tail():
             f.write(r.time + "\n")
         elif r.is_scenario():
             if r.value == "0":

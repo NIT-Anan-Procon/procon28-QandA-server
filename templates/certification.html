@@ -31,7 +31,9 @@
         <Div Align="right">
             <script>
                 var someJavaScriptVar = "{{ start_at }}";
-                document.write(someJavaScriptVar + " 開始")
+                document.write(someJavaScriptVar + " 開始<br>")
+                var someJavaScriptVar = "{{ end_at }}";
+                document.write(someJavaScriptVar + " 発行")
             </script>
         </Div>
         <Div Align="left">
