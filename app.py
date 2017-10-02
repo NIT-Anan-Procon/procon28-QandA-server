@@ -22,10 +22,13 @@ class Record:
     
     def __init__(self, record):
         print(record)
-        self.time = record['time']
-        self.tdatetime = dt.strptime(self.time, '%Y.%m.%d %H:%M:%S')
         self.tag = record['tag']
         self.value = record['val']
+        self.time = record['time']
+        try:
+            self.tdatetime = dt.strptime(self.time, '%Y.%m.%d %H:%M:%S')
+        except:
+            self.tdatetime = None
 
     def __str__(self):
         res = "record -> "
@@ -42,6 +45,9 @@ class Record:
 
     def is_location(self):
         return self.tag == "loc"
+
+    def is_care(self):
+        return self.tag == "Care"
 
 
 
@@ -71,15 +77,24 @@ def certification(getid):
 
     conts = f.readlines()
     contents = ""
+    cares = ""
+    is_care = False
     for content in conts[:len(conts)-1]:
         content = content.split("\n")[0]
         print(content)
-        contents += content + ":"
+        if is_care:
+            cares += content + ":"
+        elif content == "Care":
+            print("find care")
+            is_care = True
+        else:
+            contents += content + ":"
     print(contents)
+    print(cares)
     address = conts[len(conts)-1]
     print(address)
 
-    return render_template('certification.html', start_at=message, num=getid, contents=contents, address=address)
+    return render_template('certification.html', start_at=message, num=getid, contents=contents, address=address, cares=cares)
 
 def read_scenario(scenario):
     questions = []
@@ -89,6 +104,17 @@ def read_scenario(scenario):
             print(row)
             questions.append(row)
     return questions[1:]
+
+def read_carelist():
+    cares = []
+    with open("scenarios/carelist_v00.csv", newline='') as f:
+        dataReader = csv.reader(f)
+        for row in dataReader:
+            print(row[1])
+            cares.append(row[1])
+    return cares
+
+
 
 def get_answer(answer):
     if answer == "Y":
@@ -144,6 +170,9 @@ def post_back():
     value = ""
     html = "-"
 
+    cares = read_carelist()
+    care_done = []
+
     for i in range(num):
         key = "record" + str(i)
         print("key is " + key)
@@ -175,6 +204,11 @@ def post_back():
                 html += ", 北緯:" + dms_location(latlng[0]) + ")"
                 print(html)
             pass
+        elif r.is_care():
+            print("now care")
+            c = cares[int(r.value)] + "," + str(int(r.time)//1000)
+            print(c)
+            care_done.append(c)
         else:
             try:
                 index = int(r.tag)
@@ -188,6 +222,13 @@ def post_back():
             except:
                 pass
     f.write(value)
+
+    if care_done:
+        f.write("Care\n")
+    for care in care_done:
+        f.write(care + "\n")
+        print(care)
+
     if not html == "":
         f.write(html)
     f.close()

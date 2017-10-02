@@ -78,11 +78,13 @@
             以下の応急手当を行いました
             <table CLASS="table2">
                 <script type="text/javascript">
-
-                    for (var i = 0; i < 10; i++) {
+                    var content = "{{ cares }}"
+                    contents = content.split(":")
+                    for (var i = 0; i < contents.length-1; i++) {
+                        var question = contents[i].split(",")
                         document.write("<tr>");
-                        document.write("<td>胸骨圧迫</td>");
-                        document.write("<td>10秒</td>");
+                        document.write("<td>" + question[0] + "</td>");
+                        document.write("<td>" + question[1] + "秒</td>");
                         document.write("</tr>");
                     }
                 </script>
