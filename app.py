@@ -97,9 +97,9 @@ def certification(getid):
     print(contents)
     print(cares)
     address = conts[len(conts)-1]
-    print(address)
+    print(address[13:])
 
-    return render_template('certification.html', start_at=start_at, end_at=end_at, num=getid, contents=contents, address=address, cares=cares)
+    return render_template('certification.html', start_at=start_at, end_at=end_at, num=getid, contents=contents, address=address[13:], cares=cares)
 
 def read_scenario(scenario):
     questions = []
