@@ -62,11 +62,17 @@ def index():
 
 @app.route("/callback", methods=['GET'])
 def callback():
-    with urllib.request.urlopen("https://maps.googleapis.com/maps/api/geocode/json?latlng=33.914153,134.667149&sensor=false&language=ja") as res:
-        html = res.read().decode("utf-8")
-        html = json.loads(html)['results'][0]['formatted_address']
-        print(html)
     return 'aaaaaa feature'
+
+@app.route("/address/<latlng>", methods=['GET'])
+def address(latlng):
+    latlng = latlng.split(':') 
+    print(latlng)
+    with urllib.request.urlopen("https://maps.googleapis.com/maps/api/geocode/json?latlng=" + latlng[0] + "," + latlng[1] + "&sensor=false&language=ja") as res:
+        address = res.read().decode("utf-8")
+        address = json.loads(address)['results'][0]['formatted_address'][13:]
+        print(address)
+    return address
 
 
 @app.route("/certification/<int:getid>", methods=['GET'])
