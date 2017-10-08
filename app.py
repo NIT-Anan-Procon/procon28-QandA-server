@@ -205,9 +205,9 @@ def post_back():
             f.write(r.time + "\n")
         elif r.is_scenario():
             if r.value == "0":
-                scenario = 'scenarios/ill.csv'
+                scenario = 'scenarios/ill_1003.csv'
             else:
-                scenario = 'scenarios/injury.csv'
+                scenario = 'scenarios/kega_1003.csv'
             print(scenario)
             whole_questions = read_scenario(scenario)
         elif r.is_location():
