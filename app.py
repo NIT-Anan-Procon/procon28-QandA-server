@@ -221,7 +221,7 @@ def post_back():
             pass
         elif r.is_care():
             print("now care")
-            c = cares[int(r.value)] + "," + str(int(r.time)//1000)
+            c = cares[int(r.value)] + "," + str(1 + int(r.time)//1000)
             print(c)
             care_done.append(c)
         else:
