@@ -215,8 +215,8 @@ def post_back():
             with urllib.request.urlopen("https://maps.googleapis.com/maps/api/geocode/json?latlng=" + latlng[0] + "," + latlng[1] + "&sensor=false&language=ja") as res:
                 html = res.read().decode("utf-8")
                 html = json.loads(html)['results'][0]['formatted_address']
-                html += "(東経:" + dms_location(latlng[1]) + ")"
-                html += "(北緯:" + dms_location(latlng[0]) + ")"
+                html += "(東経:" + dms_location(latlng[1]) + ", "
+                html += "北緯:" + dms_location(latlng[0]) + ")"
                 print(html)
             pass
         elif r.is_care():
