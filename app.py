@@ -255,6 +255,13 @@ def post_back():
     #except:
     #    return "NG"
 
+    
+@app.route("/sync/<game_id>", methods=['GET'])
+def sync(game_id):
+   if game_id is not "1":
+      return "NG"
+   return '{"class":[{"name":"3E", "score":"3"}, {"name":"3I", "score":"2"}], "field":"soft1", "event":"softball" }' 
+
 if __name__ == "__main__":
     arg_parser = ArgumentParser(
         usage='Usage: python ' + __file__ + ' [--port <port>] [--help]'
