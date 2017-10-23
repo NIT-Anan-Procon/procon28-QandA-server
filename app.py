@@ -6,6 +6,7 @@ from flask import Flask, request, render_template, abort, send_from_directory, r
 import json
 import urllib.request
 
+print("this is a test")
 
 import os
 import sys
