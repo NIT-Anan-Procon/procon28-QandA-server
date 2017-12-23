@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 from argparse import ArgumentParser
 from flask import Flask, request, render_template, abort, send_from_directory, render_template
+from flask_socketio import SocketIO, emit, join_room, leave_room, close_room, rooms, disconnect        
 import json
 import urllib.request
 import psycopg2
@@ -17,7 +18,13 @@ from datetime import timedelta
 import random
 
 app = Flask(__name__)
-app.config.update({'DEBUG': True })
+app.config['SECRET_KEY'] = 'ask'
+
+socketio = SocketIO(app, async_mode=None)
+
+
+async_mode = None
+thread = None
 
 connection = psycopg2.connect("host=ec2-54-83-3-101.compute-1.amazonaws.com port=5432 dbname=d5s9osbhq5v6sn user=bpnislhqjpweyk password=7735ffd9623f5372ad5e8db15cd70bedfc7a9c9edbc033f1b21c419e4f4a1e02")
 connection.get_backend_pid()
@@ -259,7 +266,42 @@ def post_back():
     #    return "NG"
 
 
+import threading
+import time
+def checkDB():
+    """
+    check Database every 10 seconds
+    """
+    previous = 10000000
+    while True:
+        print("count")
+        cur.execute("select count(*) as total from Interview")
+        result = cur.fetchone()[0]
+        print(result)
+        if result > previous:
+            print("new " + str(result-previous) + " columns are added!")
+        previous = result
 
+        time.sleep(1)
+        print("finish counting")
+
+def socketio_update_map():
+    """Example of how to send server generated events to clients."""  
+    print("start background_thread")
+    print("emit message")
+    socketio.emit('my_response',
+                  {'data': 'Server generated event',
+                  'latlng' : '33.897949/134.667451' },
+                  namespace='/test')
+
+
+
+@app.route("/hoge")
+def update_InterviewDB():
+    socketio.start_background_task(target=socketio_update_map)
+    # TODO update Interview database 
+    return "hoge"
+    
 @app.route("/map")
 def map():
     cur.execute("select LATLNG from FireStation where FS_ID = 1")
@@ -278,4 +320,5 @@ if __name__ == "__main__":
     arg_parser.add_argument('-p', '--port', default=8000, help='port')
     arg_parser.add_argument('-d', '--debug', default=False, help='debug')
     options = arg_parser.parse_args()
-    app.run(debug=options.debug, port=options.port)
+
+    socketio.run(app, host="127.0.0.1", port=8000, debug=True)

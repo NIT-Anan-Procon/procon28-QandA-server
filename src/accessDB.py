@@ -9,16 +9,18 @@ from datetime import datetime
 time_now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 
-def insert_Interview():
+def insert_Interview(INTERVIEW_ID, LATLNG, STATE, INTERVIEW_SCENARIO_ID, INTERVIEW_RECOED, TREAT_IDs, TREAT_IDs_RECOMMEND):
+    array2text = lambda values : "ARRAY[" + ",".join(list(map(str, values))) + "]"
+
     command = "insert into Interview values("
-    command += "1, "
+    command += str(INTERVIEW_ID) + ", "
     command += "'" + time_now + "', "
-    command += "'33.897949/134.667451', "
-    command += "1, "
-    command += "1, "
-    command += "'interview_record', "
-    command += "ARRAY[1,2,3], "
-    command += "ARRAY[4,5,6]"
+    command += "'" + LATLNG + "', "
+    command += str(STATE) + ", "
+    command += str(INTERVIEW_SCENARIO_ID) + ", "
+    command += "'" + INTERVIEW_RECOED + "', "
+    command += array2text(TREAT_IDs)  + ", "
+    command += array2text(TREAT_IDs_RECOMMEND)
     command += ")"
     return command
 
@@ -38,7 +40,8 @@ def delete_FireStation():
     command = "delete from FireStation where FS_ID = 1"
     return command
 
-command = insert_FireStation()
+command = insert_Interview(2, "33.934546/134.675097", 1, 2, "record1", [2,3,4], [1,2])
+#command = insert_FireStation()
 print(command)
 cur.execute(command)
 

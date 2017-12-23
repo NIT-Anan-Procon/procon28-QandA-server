@@ -7,18 +7,33 @@ connection.get_backend_pid()
 cur = connection.cursor()
 print(cur)
 
+def create_FS():
+    command = "create table FireStation("
+    command += "FS_ID integer, "
+    command += "NAME text, "
+    command += "PASSWORD text, "
+    command += "PREFECTUR text, "
+    command += "COTY text, "
+    command += "ADDRESS text, "
+    command += "LATLNG text"
+    command += ")"
+    return command
 
-command = "create table FireStation("
-command += "FS_ID integer, "
-command += "NAME text, "
-command += "PASSWORD text, "
-command += "PREFECTUR text, "
-command += "COTY text, "
-command += "ADDRESS text, "
-command += "LATLNG text"
-command += ")"
+def create_Insert():
+    command = "create table Interview("
+    command += "PATIENT_ID integer, "
+    command += "DATE timestamp with time zone, "
+    command += "LATLNG text, "
+    command += "STATE integer, "
+    command += "INTERVIEW_SCENARIO_ID integer, "
+    command += "INTERVIEW_RECORD text, "
+    command += "TREAT_IDs integer[], "
+    command += "TREAT_IDs_RECOMMEND integer[]"
+    command += ")"
+    return command
 
-#cur.execute("create table Interview(PATIENT_ID integer, DATE timestamp with time zone, LATLNG text, STATE integer, INTERVIEW_SCENARIO_ID integer, INTERVIEW_RECORD text, TREAT_IDs integer[], TREAT_IDs_RECOMMEND integer[])"
+command = create_Insert()
+cur.execute(command)
 cur.execute(command)
 connection.commit()
 
