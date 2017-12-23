@@ -5,8 +5,7 @@ from argparse import ArgumentParser
 from flask import Flask, request, render_template, abort, send_from_directory, render_template
 import json
 import urllib.request
-
-print("this is a test")
+import psycopg2
 
 import os
 import sys
@@ -18,6 +17,11 @@ from datetime import timedelta
 import random
 
 app = Flask(__name__)
+app.config.update({'DEBUG': True })
+
+connection = psycopg2.connect("host=ec2-54-83-3-101.compute-1.amazonaws.com port=5432 dbname=d5s9osbhq5v6sn user=bpnislhqjpweyk password=7735ffd9623f5372ad5e8db15cd70bedfc7a9c9edbc033f1b21c419e4f4a1e02")
+connection.get_backend_pid()
+cur = connection.cursor()
 
 class Record:
     
@@ -57,8 +61,6 @@ class Record:
 
 @app.route("/")
 def index():
-    #return 'hogehoge'
-    #return "AAA!"
     return render_template('index.html', message="moririn dayo")
 
 @app.route("/callback", methods=['GET'])
@@ -257,37 +259,16 @@ def post_back():
     #    return "NG"
 
 
-@app.route("/sync/<game_id>", methods=['GET'])
-def sync(game_id):
-    if game_id is not "1":
-        return "NG"
-    '''
-    f = open("tmp/score.txt", 'w')
-    f.write('{"class":[{"name":"3E", "score":"3"}, {"name":"3I", "score":"2"}], "field":"soft1", "event":"softball" }')
-    f.close
-    return '{"class":[{"name":"3E", "score":"3"}, {"name":"3I", "score":"2"}], "field":"soft1", "event":"softball" }' 
-    '''
-    f = open("tmp/score.txt", 'r')
-    for line in open("tmp/score.txt", 'r'):
-        return line
 
-    return "NG"
+@app.route("/map")
+def map():
+    cur.execute("select LATLNG from FireStation where FS_ID = 1")
+    line = cur.fetchone()
+    latlng = ""
+    for row in line:
+        latlng = row.split("/")
 
-
-@app.route("/post_score/<game_id>", methods=['POST'])
-def post_score(game_id):
-    bytes_data = request.data  # bytes配列
-    str_data = bytes_data.decode('utf-8')  # 文字列に変換
-    json_data = json.loads(str_data)
-
-    class_data = json_data['class']
-    print(class_data)
-
-    f = open("tmp/score.txt", 'w')
-    f.write(str_data)
-    f.close
-
-    return "OK"
+    return render_template('map.html', latlng=latlng)
 
 
 if __name__ == "__main__":

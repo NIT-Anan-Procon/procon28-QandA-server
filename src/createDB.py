@@ -6,7 +6,19 @@ connection.get_backend_pid()
 
 cur = connection.cursor()
 print(cur)
-cur.execute("create table Interview(PATIENT_ID integer, DATE timestamp with time zone, LATLNG text, STATE integer, INTERVIEW_SCENARIO_ID integer, INTERVIEW_RECORD text, TREAT_IDs integer[], TREAT_IDs_RECOMMEND integer[])")
 
+
+command = "create table FireStation("
+command += "FS_ID integer, "
+command += "NAME text, "
+command += "PASSWORD text, "
+command += "PREFECTUR text, "
+command += "COTY text, "
+command += "ADDRESS text, "
+command += "LATLNG text"
+command += ")"
+
+#cur.execute("create table Interview(PATIENT_ID integer, DATE timestamp with time zone, LATLNG text, STATE integer, INTERVIEW_SCENARIO_ID integer, INTERVIEW_RECORD text, TREAT_IDs integer[], TREAT_IDs_RECOMMEND integer[])"
+cur.execute(command)
 connection.commit()
 

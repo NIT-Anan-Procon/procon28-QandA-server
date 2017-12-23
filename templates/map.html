@@ -1,0 +1,81 @@
+<html>
+    <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+    <style>
+        html { width: 100%; height: 100%; }
+        body { width: 100%; height: 100%; margin: 0; }
+        #map { width: 70%; height: 70%; }
+        .leaflet-marker-icon-color-blue   { -webkit-filter: hue-rotate( 30deg); filter: hue-rotate( 30deg); }
+        .leaflet-marker-icon-color-pink   { -webkit-filter: hue-rotate( 90deg); filter: hue-rotate( 90deg); }
+        .leaflet-marker-icon-color-red    { -webkit-filter: hue-rotate(150deg); filter: hue-rotate(150deg); }
+        .leaflet-marker-icon-color-yellow { -webkit-filter: hue-rotate(210deg); filter: hue-rotate(210deg); }
+        .leaflet-marker-icon-color-green  { -webkit-filter: hue-rotate(270deg); filter: hue-rotate(270deg); }
+        .leaflet-marker-icon-color-alua   { -webkit-filter: hue-rotate(330deg); filter: hue-rotate(330deg); }
+    </style>
+    </head>
+    <body>
+        <div id="map"></div>
+        <button id="buttonBackToCenter">back to center</button>
+
+
+        <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+        <script>
+            var mapCenterLatLng = ['{{ latlng[0] }}', '{{ latlng[1] }}']
+
+            //地図の設定 表示位置と縮尺
+            var map = L.map('map')
+            .setView(
+                mapCenterLatLng,
+                13
+            ).on('click', function(e) {
+                var c = e.latlng;
+                alert(c.lat+"/"+c.lng);
+            });
+
+            //地図タイルの設定
+            L.tileLayer(
+                'http://{s}.tile.osm.org/{z}/{x}/{y}.png', 
+                { attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' }
+            ).addTo(map);
+
+            //markerとpopupの設定
+            var marker = L.marker(
+                mapCenterLatLng,
+                { title: "marker-title" }
+            )
+            .addTo(map)
+            .bindPopup("<h3>Green marker</h3>")
+            .openPopup()
+            .on("click", function(){
+                alert('marker is clicked');
+            });
+
+            //iconの要素にClassを追加
+            L.DomUtil.addClass( marker._icon, 'leaflet-marker-icon-color-green' );
+
+            function removeAllMarkers(){
+                var marker3 = L.marker(
+                    [35.3748331, 130.9574997],
+                    { title: "marker-title" }
+                )
+                .addTo(map)
+                .bindPopup("<h3>other Red marker</h3>")
+                .openPopup();
+                L.DomUtil.addClass( marker3._icon, 'leaflet-marker-icon-color-red' );
+            }
+
+            function backToCenter(){
+                map.panTo(mapCenterLatLng);
+            }
+
+
+     
+            var table = document.createElement( 'table' );
+
+            document.querySelector('#buttonBackToCenter').onclick=function(){ backToCenter() };
+
+        </script>
+    </body>
+</html>

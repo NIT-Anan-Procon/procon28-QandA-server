@@ -8,20 +8,38 @@ cur = connection.cursor()
 from datetime import datetime
 time_now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-command = "insert into Interview values("
-command += "1, "
-command += "'" + time_now + "', "
-command += "'33.897949/134.667451', "
-command += "1, "
-command += "1, "
-command += "'interview_record', "
-command += "ARRAY[1,2,3], "
-command += "ARRAY[4,5,6]"
-command += ")"
-cur.execute(command)
-cur.execute("select PATIENT_ID, DATE from Interview")
 
-for row in cur:
-    print(row)
+def insert_Interview():
+    command = "insert into Interview values("
+    command += "1, "
+    command += "'" + time_now + "', "
+    command += "'33.897949/134.667451', "
+    command += "1, "
+    command += "1, "
+    command += "'interview_record', "
+    command += "ARRAY[1,2,3], "
+    command += "ARRAY[4,5,6]"
+    command += ")"
+    return command
+
+def insert_FireStation():
+    command = "insert into FireStation values("
+    command += "1, "
+    command += "'阿南市消防本部', "
+    command += "'ananFireStation', "
+    command += "'徳島県', "
+    command += "'阿南市', "
+    command += "'徳島県阿南市辰己町1-33', "
+    command += "'33.934346/134.679097'"
+    command += ")"
+    return command
+
+def delete_FireStation():
+    command = "delete from FireStation where FS_ID = 1"
+    return command
+
+command = insert_FireStation()
+print(command)
+cur.execute(command)
 
 connection.commit()
