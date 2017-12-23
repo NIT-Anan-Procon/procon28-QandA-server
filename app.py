@@ -285,23 +285,85 @@ def checkDB():
         time.sleep(1)
         print("finish counting")
 
-def socketio_update_map():
-    """Example of how to send server generated events to clients."""  
-    print("start background_thread")
-    print("emit message")
-    socketio.emit('my_response',
-                  {'data': 'Server generated event',
-                  'latlng' : '33.897949/134.667451' },
-                  namespace='/test')
+def socketio_add_interview(patient_id, date, state, latlng, interview_scenario_id, interview_record, treat_ids):
+    socketio.emit('add new marker',
+        {
+        'patient_id' : patient_id,
+        'date' : date,
+        'state' : state,
+        'latlng' : latlng
+        },
+        namespace='/test')
 
+import random
+patient_id = 0
+@app.route("/addinterview")
+def add_InterviewDB():
+    global patient_id
+    patient_id += 1
+    date = "2017-12-23 12:34:56"
+    state = random.randint(1, 3)
+    state = 1
+    lat = random.uniform(33.904616008362325, 33.96713885277394)
+    lng = random.uniform(134.63041305541992, 134.7311782836914)
+    latlng = str(lat) + "/" + str(lng)
+    interview_scenario_id = 1
+    interview_record = "abc"
+    treat_ids = [1,2,3]
 
-
-@app.route("/hoge")
-def update_InterviewDB():
-    socketio.start_background_task(target=socketio_update_map)
+    socketio.start_background_task(target=socketio_add_interview, 
+        patient_id=patient_id, 
+        date=date, 
+        state=state, 
+        latlng=latlng,
+        interview_scenario_id=interview_scenario_id,
+        interview_record=interview_record,
+        treat_ids=treat_ids,
+    )
     # TODO update Interview database 
-    return "hoge"
+    return "add marker : " + str(patient_id)
+
+def socketio_delete_interview(patient_id):
+    socketio.emit('delete a marker',
+        {
+        'patient_id' : patient_id
+        },
+        namespace='/test')
+
+@app.route("/deleteinterview")
+def delete_InterviewDB():
+    global patient_id
+    if patient_id == 0:
+        return "nothing to delete"
+    socketio.start_background_task(target=socketio_delete_interview,
+        patient_id=patient_id
+    )
+    patient_id -= 1
+    #TODO delete a line from Interview database
+    return "delete marker : " + str(patient_id)
     
+def socketio_change_state_interview(patient_id, state):
+    socketio.emit('change the state',
+        {
+        'patient_id' : patient_id,
+        'state' : state
+        },
+        namespace='/test')
+
+@app.route("/changestateinterview/<int:new_state>")
+def change_state_InterviewDB(new_state):
+    if patient_id == 0:
+        return "nothing to change"
+
+    rand_id = random.randint(1, patient_id)
+    state = random.randint(1, 3)
+    state = new_state
+    socketio.start_background_task(target=socketio_change_state_interview,
+        patient_id=rand_id,
+        state=state
+    )
+    return "change state : " + str(rand_id) + "/" + str(patient_id) + " to " + str(state)
+
 @app.route("/map")
 def map():
     cur.execute("select LATLNG from FireStation where FS_ID = 1")

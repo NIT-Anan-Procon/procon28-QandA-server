@@ -82,21 +82,67 @@
 
             document.querySelector('#buttonBackToCenter').onclick=function(){ backToCenter() };
 
+            var interviews = new Array();
+            var interviewmessages = new Array();
 
-            namespace = "/test"
-            var socket = io.connect('http://localhost:8000' + namespace);
-            socket.on('my_response', function(msg) {
+
+            //function add_marker(msg){
+            function add_marker(patient_id, state, latlng){
+                var icon = "";
+                switch (state){
+                    case 1:
+                        icon = 'leaflet-marker-icon-color-blue';
+                        break;
+                    case 2:
+                        icon = 'leaflet-marker-icon-color-green';
+                        break;
+                    case 3:
+                        icon = 'leaflet-marker-icon-color-red';
+                        break;
+                }
                 var marker = L.marker(
-                    latlng2list(msg.latlng),
+                    latlng2list(latlng),
                     { title: "marker-title" }
                 )
                 .addTo(map)
-                .bindPopup("<h3>New marker</h3>")
+                .bindPopup("<h3>PATIENT_ID" + patient_id + "\n" +  latlng + "</h3>")
                 .openPopup()
                 .on("click", function(){
-                    alert('marker is clicked');
                 });
-                //$('#log').append('<br>' + $('<div/>').text('Received #' + msg.count + ': ' + msg.data).html());
+                L.DomUtil.addClass( marker._icon, icon );
+
+                interviews[patient_id] = marker
+                interviewmessages[patient_id] = {"patient_id":patient_id, "state":state, "latlng":latlng}
+            }
+
+            function delete_marker(msg){
+                var marker = interviews[msg.patient_id]
+                map.removeLayer(marker);
+            }
+
+            namespace = "/test"
+            var socket = io.connect('http://localhost:8000' + namespace);
+            socket.on('add new marker', function(msg) {
+                add_marker(
+                    msg.patient_id,
+                    msg.state,
+                    msg.latlng
+                )
+            });
+
+
+            socket.on('delete a marker', function(msg) {
+                delete_marker(msg)
+            });
+
+            socket.on('change the state', function(new_msg) {
+                delete_marker(new_msg)
+                msg = interviewmessages[new_msg.patient_id]
+                add_marker(
+                    msg.patient_id,
+                    new_msg.state,
+                    msg.latlng
+                )
             });
             
 
