@@ -130,7 +130,8 @@
             }
 
             namespace = "/test"
-            var socket = io.connect('http://localhost:8000' + namespace);
+            //var socket = io.connect('http://localhost:8000' + namespace);
+            var socket = io.connect('//' + document.domain + ':' + location.port + '/test');
             socket.on('add new marker', function(msg) {
                 add_marker(
                     msg.patient_id,
