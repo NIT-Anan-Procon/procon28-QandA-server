@@ -22,14 +22,10 @@ app.config['SECRET_KEY'] = 'ask'
 
 socketio = SocketIO(app, async_mode=None)
 
-
-
 async_mode = None
 thread = None
 
-
-
-local = True
+local = False
 
 host = ""
 port = 0
@@ -403,7 +399,6 @@ def map():
 
 
 if __name__ == "__main__":
-    
     arg_parser = ArgumentParser(
         usage='Usage: python ' + __file__ + ' [--port <port>] [--help]'
     )
@@ -412,4 +407,7 @@ if __name__ == "__main__":
     options = arg_parser.parse_args()
 
     #socketio.run(app, host="127.0.0.1", port=8000, debug=True)
-    socketio.run(app, port=8000)
+    if local:
+        socketio.run(app, host="127.0.0.1", port=8000, debug=True)
+    else:
+        socketio.run(app, host="https://qa-server.herokuapp.com/")
