@@ -48,6 +48,7 @@ else:
 
 
 print("connect DB")
+print("host="+host+" port="+str(port)+" dbname="+dbname+" user="+user+" password="+password+"")
 connection = psycopg2.connect("host="+host+" port="+str(port)+" dbname="+dbname+" user="+user+" password="+password+"")
 connection.get_backend_pid()
 cur = connection.cursor()
@@ -409,5 +410,4 @@ if __name__ == "__main__":
     if local:
         socketio.run(app, host="127.0.0.1", port=8000, debug=True)
     else:
-        #socketio.run(app)
-        app.run()
+        socketio.run()
