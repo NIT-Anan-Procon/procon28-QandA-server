@@ -23,10 +23,37 @@ app.config['SECRET_KEY'] = 'ask'
 socketio = SocketIO(app, async_mode=None)
 
 
+
 async_mode = None
 thread = None
 
-connection = psycopg2.connect("host=ec2-54-83-3-101.compute-1.amazonaws.com port=5432 dbname=d5s9osbhq5v6sn user=bpnislhqjpweyk password=7735ffd9623f5372ad5e8db15cd70bedfc7a9c9edbc033f1b21c419e4f4a1e02")
+
+
+local = True
+
+host = ""
+port = 0
+dbname = ""
+user = ""
+password = ""
+
+if local:
+    host = "localhost"
+    port = 5432
+    dbname = "QandA_server"
+    user = "QandA"
+    password = ""
+else:
+    host = "ec2-54-83-3-101.compute-1.amazonaws.com"
+    port = 5432
+    dbname = "d5s9osbhq5v6sn"
+    user = "bpnislhqjpweyk"
+    password = "7735ffd9623f5372ad5e8db15cd70bedfc7a9c9edbc033f1b21c419e4f4a1e02"
+
+
+print("connect DB")
+#connection = psycopg2.connect("host=ec2-54-83-3-101.compute-1.amazonaws.com port=5432 dbname=d5s9osbhq5v6sn user=bpnislhqjpweyk password=7735ffd9623f5372ad5e8db15cd70bedfc7a9c9edbc033f1b21c419e4f4a1e02")
+connection = psycopg2.connect("host="+host+" port="+str(port)+" dbname="+dbname+" user="+user+" password="+password+"")
 connection.get_backend_pid()
 cur = connection.cursor()
 
@@ -376,6 +403,7 @@ def map():
 
 
 if __name__ == "__main__":
+    
     arg_parser = ArgumentParser(
         usage='Usage: python ' + __file__ + ' [--port <port>] [--help]'
     )
@@ -384,4 +412,4 @@ if __name__ == "__main__":
     options = arg_parser.parse_args()
 
     #socketio.run(app, host="127.0.0.1", port=8000, debug=True)
-    socketio.run(app)
+    socketio.run(app, port=8000)
