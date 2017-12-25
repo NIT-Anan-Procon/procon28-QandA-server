@@ -39,7 +39,7 @@ if NAME == 'localQAserver':
     dbname = "QandA_server"
     user = "QandA"
     password = ""
-elif NAME == 'herokuQAserver'
+elif NAME == 'herokuQAserver':
     host = "ec2-54-83-3-101.compute-1.amazonaws.com"
     port = 5432
     dbname = "d5s9osbhq5v6sn"
@@ -408,7 +408,7 @@ if __name__ == "__main__":
 
     #socketio.run(app, host="127.0.0.1", port=8000, debug=True)
     
-    if NAME == 'localQAserver'
+    if NAME == 'localQAserver':
         socketio.run(app, host="127.0.0.1", port=8000, debug=True)
     elif NAME == 'herokuQAserver':
         socketio.run()
