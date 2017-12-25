@@ -25,7 +25,7 @@ socketio = SocketIO(app, async_mode=None)
 async_mode = None
 thread = None
 
-local = True
+NAME = os.getenv('NAME', 'localQAserver')
 
 host = ""
 port = 0
@@ -33,13 +33,13 @@ dbname = ""
 user = ""
 password = ""
 
-if local:
+if NAME == 'localQAserver':
     host = "localhost"
     port = 5432
     dbname = "QandA_server"
     user = "QandA"
     password = ""
-else:
+elif NAME == 'herokuQAserver'
     host = "ec2-54-83-3-101.compute-1.amazonaws.com"
     port = 5432
     dbname = "d5s9osbhq5v6sn"
@@ -407,7 +407,8 @@ if __name__ == "__main__":
     options = arg_parser.parse_args()
 
     #socketio.run(app, host="127.0.0.1", port=8000, debug=True)
-    if local:
+    
+    if NAME == 'localQAserver'
         socketio.run(app, host="127.0.0.1", port=8000, debug=True)
-    else:
+    elif NAME == 'herokuQAserver':
         socketio.run()
