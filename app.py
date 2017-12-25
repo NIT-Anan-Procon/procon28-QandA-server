@@ -25,7 +25,7 @@ socketio = SocketIO(app, async_mode=None)
 async_mode = None
 thread = None
 
-local = False
+local = True
 
 host = ""
 port = 0
@@ -409,4 +409,5 @@ if __name__ == "__main__":
     if local:
         socketio.run(app, host="127.0.0.1", port=8000, debug=True)
     else:
-        socketio.run(app)
+        #socketio.run(app)
+        app.run()
