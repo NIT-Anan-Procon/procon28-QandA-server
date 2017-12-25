@@ -1,13 +1,25 @@
 
 import psycopg2
-#connection = psycopg2.connect("host=ec2-54-83-3-101.compute-1.amazonaws.com port=5432 dbname=d5s9osbhq5v6sn user=bpnislhqjpweyk password=7735ffd9623f5372ad5e8db15cd70bedfc7a9c9edbc033f1b21c419e4f4a1e02")
-#connection.get_backend_pid()
+import os
+
+NAME = os.getenv('NAME', 'localQAserver')
+if NAME == 'localQAserver':
+    host = "localhost"
+    port = 5432
+    dbname = "QandA_server"
+    user = "QandA"
+    password = ""
+elif NAME == 'herokuQAserver':
+    host = "ec2-54-83-3-101.compute-1.amazonaws.com"
+    port = 5432
+    dbname = "d5s9osbhq5v6sn"
+    user = "bpnislhqjpweyk"
+    password = "7735ffd9623f5372ad5e8db15cd70bedfc7a9c9edbc033f1b21c419e4f4a1e02"
 
 
-#cur = connection.cursor()
-#print(cur)
-#cur.execute("create table Interview(PATIENT_ID integer, DATE timestamp, LATLNG text, STATE integer, INTERVIEW_SCENARIO_ID integer, INTERVIEW_RECORD text, TREAT_IDs integer[], TREAT_IDs_RECOMMEND integer[])")
-
+connection = psycopg2.connect("host="+host+" port="+str(port)+" dbname="+dbname+" user="+user+" password="+password+"")
+connection.get_backend_pid()
+cur = connection.cursor()
 
 def create_FS():
     command = "create table FireStation("
@@ -21,8 +33,8 @@ def create_FS():
     command += ")"
     return command
 
-def create_Insert():
-    command = "create table Interview("
+def create_Interview():
+    command = "create table interview("
     command += "PATIENT_ID integer, "
     command += "DATE timestamp with time zone, "
     command += "LATLNG text, "
@@ -34,8 +46,7 @@ def create_Insert():
     command += ")"
     return command
 
-#command = create_Insert()
-#cur.execute(command)
-#cur.execute(command)
-#connection.commit()
+    insert into interview values(1, '2017-12-26 00:54:04', '33.95481678979775/134.6927239552371', 1, 1, 'abc', ARRAY[1,2,3], ARRAY[])
 
+def execute():
+    print(create_Interview())

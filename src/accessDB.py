@@ -18,7 +18,7 @@ time_now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 def insert_Interview(INTERVIEW_ID, LATLNG, STATE, INTERVIEW_SCENARIO_ID, INTERVIEW_RECOED, TREAT_IDs, TREAT_IDs_RECOMMEND):
     array2text = lambda values : "ARRAY[" + ",".join(list(map(str, values))) + "]"
 
-    command = "insert into Interview values("
+    command = 'insert into interview values('
     command += str(INTERVIEW_ID) + ", "
     command += "'" + time_now + "', "
     command += "'" + LATLNG + "', "

@@ -17,6 +17,10 @@ from datetime import datetime as dt
 from datetime import timedelta
 import random
 
+
+sys.path.append('src')
+import accessDB
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'ask'
 
@@ -36,8 +40,8 @@ password = ""
 if NAME == 'localQAserver':
     host = "localhost"
     port = 5432
-    dbname = "QandA_server"
-    user = "QandA"
+    dbname = "qadb"
+    user = "tomoya"
     password = ""
 elif NAME == 'herokuQAserver':
     host = "ec2-54-83-3-101.compute-1.amazonaws.com"
@@ -48,7 +52,6 @@ elif NAME == 'herokuQAserver':
 
 
 print("connect DB")
-print("host="+host+" port="+str(port)+" dbname="+dbname+" user="+user+" password="+password+"")
 connection = psycopg2.connect("host="+host+" port="+str(port)+" dbname="+dbname+" user="+user+" password="+password+"")
 connection.get_backend_pid()
 cur = connection.cursor()
@@ -91,7 +94,7 @@ class Record:
 
 @app.route("/")
 def index():
-    return render_template('index.html', message="moririn dayo")
+    return render_template('index.html')
 
 @app.route("/callback", methods=['GET'])
 def callback():
@@ -343,7 +346,12 @@ def add_InterviewDB():
         interview_record=interview_record,
         treat_ids=treat_ids,
     )
-    # TODO update Interview database 
+    # TODO update Interview database
+    command = accessDB.insert_Interview(patient_id, latlng, state, interview_scenario_id, interview_record, treat_ids, [-1])
+    print(command)
+    print(command)
+    cur.execute(command)
+    connection.commit()
     return "add marker : " + str(patient_id)
 
 def socketio_delete_interview(patient_id):
@@ -394,9 +402,16 @@ def map():
     latlng = ""
     for row in line:
         latlng = row.split("/")
-
+    print(latlng)
     return render_template('map.html', latlng=latlng)
 
+@app.route("/reset")
+def reset_interview():
+    global patient_id
+    cur.execute("delete from interview")
+    connection.commit()
+    patient_id = 0
+    return "reset interview table"
 
 if __name__ == "__main__":
     arg_parser = ArgumentParser(
@@ -405,8 +420,6 @@ if __name__ == "__main__":
     arg_parser.add_argument('-p', '--port', default=8000, help='port')
     arg_parser.add_argument('-d', '--debug', default=False, help='debug')
     options = arg_parser.parse_args()
-
-    #socketio.run(app, host="127.0.0.1", port=8000, debug=True)
     
     if NAME == 'localQAserver':
         socketio.run(app, host="127.0.0.1", port=8000, debug=True)
