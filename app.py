@@ -48,7 +48,6 @@ else:
 
 
 print("connect DB")
-#connection = psycopg2.connect("host=ec2-54-83-3-101.compute-1.amazonaws.com port=5432 dbname=d5s9osbhq5v6sn user=bpnislhqjpweyk password=7735ffd9623f5372ad5e8db15cd70bedfc7a9c9edbc033f1b21c419e4f4a1e02")
 connection = psycopg2.connect("host="+host+" port="+str(port)+" dbname="+dbname+" user="+user+" password="+password+"")
 connection.get_backend_pid()
 cur = connection.cursor()
@@ -410,4 +409,4 @@ if __name__ == "__main__":
     if local:
         socketio.run(app, host="127.0.0.1", port=8000, debug=True)
     else:
-        socketio.run(app, host="https://qa-server.herokuapp.com/")
+        socketio.run(app)
