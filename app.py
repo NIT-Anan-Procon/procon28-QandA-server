@@ -383,4 +383,5 @@ if __name__ == "__main__":
     arg_parser.add_argument('-d', '--debug', default=False, help='debug')
     options = arg_parser.parse_args()
 
-    socketio.run(app, host="127.0.0.1", port=8000, debug=True)
+    #socketio.run(app, host="127.0.0.1", port=8000, debug=True)
+    socketio.run(app)
