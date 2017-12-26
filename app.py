@@ -51,7 +51,9 @@ elif NAME == 'herokuQAserver':
     password = "7735ffd9623f5372ad5e8db15cd70bedfc7a9c9edbc033f1b21c419e4f4a1e02"
 
 
+
 print("connect DB")
+print("host="+host+" port="+str(port)+" dbname="+dbname+" user="+user+" password="+password+"")
 connection = psycopg2.connect("host="+host+" port="+str(port)+" dbname="+dbname+" user="+user+" password="+password+"")
 connection.get_backend_pid()
 cur = connection.cursor()
@@ -288,9 +290,6 @@ def post_back():
         print(q)
     return str(QRindex)
 
-    #except:
-    #    return "NG"
-
 
 import threading
 import time
@@ -323,6 +322,7 @@ def socketio_add_interview(patient_id, date, state, latlng, interview_scenario_i
 
 import random
 patient_id = 0
+
 @app.route("/addinterview")
 def add_InterviewDB():
     global patient_id
@@ -346,12 +346,11 @@ def add_InterviewDB():
         interview_record=interview_record,
         treat_ids=treat_ids,
     )
-    # TODO update Interview database
+
     command = accessDB.insert_Interview(patient_id, latlng, state, interview_scenario_id, interview_record, treat_ids, [-1])
-    print(command)
-    print(command)
     cur.execute(command)
     connection.commit()
+
     return "add marker : " + str(patient_id)
 
 def socketio_delete_interview(patient_id):
@@ -369,8 +368,11 @@ def delete_InterviewDB():
     socketio.start_background_task(target=socketio_delete_interview,
         patient_id=patient_id
     )
+
+    cur.execute("delete from interview where patient_id = " + str(patient_id))
+    connection.commit()
+
     patient_id -= 1
-    #TODO delete a line from Interview database
     return "delete marker : " + str(patient_id)
     
 def socketio_change_state_interview(patient_id, state):
@@ -397,17 +399,45 @@ def change_state_InterviewDB(new_state):
 
 @app.route("/map")
 def map():
+    # show map with logged-in FireStation and markers of interviews
     cur.execute("select LATLNG from FireStation where FS_ID = 1")
     line = cur.fetchone()
     latlng = ""
     for row in line:
         latlng = row.split("/")
     print(latlng)
-    return render_template('map.html', latlng=latlng)
+
+    cur.execute("select patient_id, latlng, state from interview")
+    line = cur.fetchall()
+    markers = []
+
+    for row in line:
+        dic = {
+            'patient_id' : row[0],
+            'latlng' : row[1],
+            'state' : row[2],
+        }
+        markers.append(dic)
+
+
+    return render_template('map.html', latlng=latlng, markers=markers)
+
+def reset_all_interview(patient_ids):
+    socketio.emit('delete all markers',
+        {'patient_ids' : patient_ids,},
+        namespace='/test')
 
 @app.route("/reset")
 def reset_interview():
     global patient_id
+
+    cur.execute("select patient_id from interview")
+    result = cur.fetchall()
+    patient_ids = []
+    for r in result:
+        patient_ids.append({'patient_id' : r[0]})
+    socketio.start_background_task(target=reset_all_interview, patient_ids=patient_ids)
+
     cur.execute("delete from interview")
     connection.commit()
     patient_id = 0
