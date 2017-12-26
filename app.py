@@ -37,6 +37,8 @@ dbname = ""
 user = ""
 password = ""
 
+NAMESPACE_MAP = "/map"
+
 if NAME == 'localQAserver':
     host = "localhost"
     port = 5432
@@ -318,7 +320,7 @@ def socketio_add_interview(patient_id, date, state, latlng, interview_scenario_i
         'state' : state,
         'latlng' : latlng
         },
-        namespace='/test')
+        namespace=NAMESPACE_MAP)
 
 import random
 patient_id = 0
@@ -358,7 +360,7 @@ def socketio_delete_interview(patient_id):
         {
         'patient_id' : patient_id
         },
-        namespace='/test')
+        namespace=NAMESPACE_MAP)
 
 @app.route("/deleteinterview")
 def delete_InterviewDB():
@@ -381,7 +383,7 @@ def socketio_change_state_interview(patient_id, state):
         'patient_id' : patient_id,
         'state' : state
         },
-        namespace='/test')
+        namespace=NAMESPACE_MAP)
 
 @app.route("/changestateinterview/<int:new_state>")
 def change_state_InterviewDB(new_state):
@@ -425,7 +427,7 @@ def map():
 def reset_all_interview(patient_ids):
     socketio.emit('delete all markers',
         {'patient_ids' : patient_ids,},
-        namespace='/test')
+        namespace=NAMESPACE_MAP)
 
 @app.route("/reset")
 def reset_interview():
