@@ -88,9 +88,7 @@
             var interviews = new Array();
             var interviewmessages = new Array();
 
-
-            //function add_marker(msg){
-            function add_marker(patient_id, state, latlng){
+            function add_marker(patient_id, state, latlng, records){
                 var icon = "";
                 switch (state){
                     case 1:
@@ -108,9 +106,17 @@
                     { title: "marker-title" }
                 )
                 .addTo(map)
-                .bindPopup("<h3>PATIENT_ID" + patient_id + "\n" +  latlng + "</h3>")
                 .on("click", function(){
-                    alert("marker is clicked");
+                    var text = String(patient_id) + "\n" + latlng;
+                    for(var i = 0; i < records.length; i++){
+                        var record = records[i];
+                        text += "\n"
+                        for(var j = 0; j < record.length; j++){
+                            text += String(record[j])
+                        }
+                    }
+
+                    alert("marker is clicked" + text);
                     $("#interviewinfo").text(String(patient_id));
                 });
                 L.DomUtil.addClass( marker._icon, icon );
@@ -126,7 +132,7 @@
 
             // add marker when it opens
             {% for marker in markers %}
-                add_marker({{ marker.patient_id }}, {{ marker.state }}, '{{ marker.latlng }}')
+                add_marker({{ marker.patient_id }}, {{ marker.state }}, '{{ marker.latlng }}', {{ marker.interview_records }})
             {% endfor %}
 
             namespace = "/map"
@@ -136,7 +142,8 @@
                 add_marker(
                     msg.patient_id,
                     msg.state,
-                    msg.latlng
+                    msg.latlng,
+                    msg.interview_records,
                 )
             });
 
@@ -150,7 +157,8 @@
                 add_marker(
                     msg.patient_id,
                     new_msg.state,
-                    msg.latlng
+                    msg.latlng,
+                    msg.interview_records
                 )
             });
 

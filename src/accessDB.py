@@ -18,16 +18,33 @@ for row in cur:
 
 time_now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-def insert_Interview(INTERVIEW_ID, LATLNG, STATE, INTERVIEW_SCENARIO_ID, INTERVIEW_RECOED, TREAT_IDs, TREAT_IDs_RECOMMEND):
-    array2text = lambda values : "ARRAY[" + ",".join(list(map(str, values))) + "]"
+def valid_list(l):
+    """list must has at least one data"""
+    if len(l) is 0:
+        return [-1]
+    else:
+        return l
+
+def insert_Interview(PATIENT_ID, LATLNG, STATE, INTERVIEW_SCENARIO_ID, INTERVIEW_RECOEDs, TREAT_IDs, TREAT_IDs_RECOMMEND):
+    """
+    INTERVIEW_ID : int
+    LATLNG : text (lat/lng)
+    STATE : int
+    INTERVIEW_SCENARIO_ID : int
+    INTERVIEW_RECOED : 
+    TREAT_IDs : [int]
+    TREAT_IDs_RECOMMEND : [int]
+    """
+    array2text = lambda values : "ARRAY[" + ",".join(list(map(str, valid_list(values)))) + "]"
+    interviewrecords2text = lambda records : ",".join(records)
 
     command = 'insert into interview values('
-    command += str(INTERVIEW_ID) + ", "
+    command += str(PATIENT_ID) + ", "
     command += "'" + time_now + "', "
     command += "'" + LATLNG + "', "
     command += str(STATE) + ", "
     command += str(INTERVIEW_SCENARIO_ID) + ", "
-    command += "'" + INTERVIEW_RECOED + "', "
+    command += "'" + interviewrecords2text(INTERVIEW_RECOEDs) + "', "
     command += array2text(TREAT_IDs)  + ", "
     command += array2text(TREAT_IDs_RECOMMEND)
     command += ")"

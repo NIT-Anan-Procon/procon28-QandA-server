@@ -20,6 +20,7 @@ import random
 
 sys.path.append('src')
 import accessDB
+from interview import *
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'ask'
@@ -294,8 +295,13 @@ def post_back():
     return str(QRindex)
 
 
-import threading
 import time
+import random
+import json
+
+cur.execute("select count(*) as total from Interview")
+patient_id = cur.fetchone()[0]
+
 def checkDB():
     """
     check Database every 10 seconds
@@ -313,20 +319,21 @@ def checkDB():
         time.sleep(1)
         print("finish counting")
 
-def socketio_add_interview(patient_id, date, state, latlng, interview_scenario_id, interview_record, treat_ids):
+def socketio_add_interview(patient_id, date, state, latlng, interview_records, treat_ids, treat_ids_recommend):
+    interview_records_ = []
+    for val in list(map(json.dumps, interview_records)):
+        interview_records_.append(val.encode('utf-8'))
+
     socketio.emit('add new marker',
         {
         'patient_id' : patient_id,
         'date' : date,
         'state' : state,
-        'latlng' : latlng
+        'latlng' : latlng,
+        'interview_records' : interview_records,
         },
         namespace=NAMESPACE_MAP)
-
-import random
-
-cur.execute("select count(*) as total from Interview")
-patient_id = cur.fetchone()[0]
+    print(interview_records)
 
 @app.route("/addinterview")
 def add_InterviewDB():
@@ -339,20 +346,33 @@ def add_InterviewDB():
     lng = random.uniform(134.63041305541992, 134.7311782836914)
     latlng = str(lat) + "/" + str(lng)
     interview_scenario_id = 1
-    interview_record = "abc"
+    interview_record_texts = ["元気ですか:いいえ", "怪我をしましたか:はい"]
     treat_ids = [1,2,3]
+    treat_ids_recommend = []
 
-    socketio.start_background_task(target=socketio_add_interview, 
-        patient_id=patient_id, 
-        date=date, 
-        state=state, 
+    interviewdata = InterviewData(
+        patient_id=patient_id,
+        date=date,
+        state=state,
         latlng=latlng,
         interview_scenario_id=interview_scenario_id,
-        interview_record=interview_record,
+        interview_record_texts=interview_record_texts,
         treat_ids=treat_ids,
+        treat_ids_recommend=treat_ids_recommend
+        )
+
+    interview_dict = interviewdata.get_dict()
+    socketio.start_background_task(target=socketio_add_interview, 
+        patient_id=interview_dict["patient_id"],
+        date=interview_dict["date"],
+        state=interview_dict["state"],
+        latlng=interview_dict["latlng"],
+        interview_records=interview_record_texts,
+        treat_ids=interview_dict["treat_ids"],
+        treat_ids_recommend=interview_dict["treat_ids_recommend"],
     )
 
-    command = accessDB.insert_Interview(patient_id, latlng, state, interview_scenario_id, interview_record, treat_ids, [-1])
+    command = accessDB.insert_Interview(patient_id, latlng, state, interview_scenario_id, interview_record_texts, treat_ids, treat_ids_recommend)
     cur.execute(command)
     connection.commit()
 
@@ -407,7 +427,7 @@ def change_state_InterviewDB(new_state):
     return "change state : " + str(rand_id) + "/" + str(patient_id) + " to " + str(state)
 
 @app.route("/map")
-def map():
+def show_map():
     # show map with logged-in FireStation and markers of interviews
     cur.execute("select LATLNG from FireStation where FS_ID = 1")
     line = cur.fetchone()
@@ -459,8 +479,6 @@ def input():
 @socketio.on('add new interview', namespace=NAMESPACE_INTERVIEW)
 def new_interview(message):
     print(message['data'])
-
-
 
 
 if __name__ == "__main__":
