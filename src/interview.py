@@ -14,7 +14,7 @@ class InterviewData:
         """
         patient_id : int
         date : string '%Y年%m月%d日 %H時%M分'
-        latlng : [float]
+        latlng : text (lat/lng)
         interview_scenario_id : int
         interview_records_text : [text]
         treat_ids : [int]
