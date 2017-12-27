@@ -324,7 +324,9 @@ def socketio_add_interview(patient_id, date, state, latlng, interview_scenario_i
         namespace=NAMESPACE_MAP)
 
 import random
-patient_id = 0
+
+cur.execute("select count(*) as total from Interview")
+patient_id = cur.fetchone()[0]
 
 @app.route("/addinterview")
 def add_InterviewDB():

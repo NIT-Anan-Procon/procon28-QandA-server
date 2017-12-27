@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="utf-8">
+        <title>問診情報送信</title>
+        <script type="text/javascript" src="main.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
+        <script>
+            function main()
+            {
+                var str = document.info.message2.value;
+                socket.emit('add new interview', {data: str});
+            }
+
+            namespace = '/input'; 
+            var socket = io.connect('http://' + document.domain + ':' + location.port + namespace);
+        </script>
+    </head>
+
+    <body>
+        <form name="info">
+        <table border="1">
+            <tr>
+                <td>ID</td>
+                <td><input type="text" name="message1" value=""></td>
+            </tr>
+            <tr>
+                <td>STATE</td>
+                <td><input type="text" name="message2" value=""></td>
+            </tr>
+        </table>
+        <input type="text" name="message3" value=""></br>
+        <input type="text" name="message4" value=""></br>
+        <input type="button" value="実行ボタン" onclick="main();"/>
+    </body>
+
+</html>
