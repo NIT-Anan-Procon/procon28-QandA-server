@@ -38,6 +38,7 @@ user = ""
 password = ""
 
 NAMESPACE_MAP = "/map"
+NAMESPACE_INTERVIEW = "/input"
 
 if NAME == 'localQAserver':
     host = "localhost"
@@ -397,6 +398,10 @@ def change_state_InterviewDB(new_state):
         patient_id=rand_id,
         state=state
     )
+
+    cur.execute("update interview set state = " + str(state) + " where patient_id = " + str(rand_id))
+    connection.commit()
+
     return "change state : " + str(rand_id) + "/" + str(patient_id) + " to " + str(state)
 
 @app.route("/map")
@@ -444,6 +449,17 @@ def reset_interview():
     connection.commit()
     patient_id = 0
     return "reset interview table"
+
+@app.route("/input")
+def input():
+    return render_template('input.html')
+
+@socketio.on('add new interview', namespace=NAMESPACE_INTERVIEW)
+def new_interview(message):
+    print(message['data'])
+
+
+
 
 if __name__ == "__main__":
     arg_parser = ArgumentParser(
