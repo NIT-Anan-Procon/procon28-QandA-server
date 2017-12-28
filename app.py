@@ -346,7 +346,7 @@ def add_InterviewDB():
     lng = random.uniform(134.63041305541992, 134.7311782836914)
     latlng = str(lat) + "/" + str(lng)
     interview_scenario_id = 1
-    interview_record_texts = ["元気ですか:いいえ", "怪我をしましたか:はい"]
+    interview_record_texts = ["元気ですか,いいえ", "怪我をしましたか,はい"]
     treat_ids = [1,2,3]
     treat_ids_recommend = []
 
@@ -445,6 +445,7 @@ def show_map():
             'patient_id' : row[0],
             'latlng' : row[1],
             'state' : row[2],
+            'interview_records':"元気ですか,いいえ:怪我をしましたか,はい",
         }
         markers.append(dic)
 

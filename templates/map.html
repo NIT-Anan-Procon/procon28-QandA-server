@@ -6,21 +6,75 @@
         <style>
             html { width: 100%; height: 100%; }
             body { width: 100%; height: 100%; margin: 0; }
-            #map { width: 70%; height: 70%; }
+            #map { width: 70%; height: 60%; }
             .leaflet-marker-icon-color-blue   { -webkit-filter: hue-rotate( 30deg); filter: hue-rotate( 30deg); }
             .leaflet-marker-icon-color-pink   { -webkit-filter: hue-rotate( 90deg); filter: hue-rotate( 90deg); }
             .leaflet-marker-icon-color-red    { -webkit-filter: hue-rotate(150deg); filter: hue-rotate(150deg); }
             .leaflet-marker-icon-color-yellow { -webkit-filter: hue-rotate(210deg); filter: hue-rotate(210deg); }
             .leaflet-marker-icon-color-green  { -webkit-filter: hue-rotate(270deg); filter: hue-rotate(270deg); }
             .leaflet-marker-icon-color-alua   { -webkit-filter: hue-rotate(330deg); filter: hue-rotate(330deg); }
+
+            table.example{
+                width:920px;
+                margin-left: 20;
+                border:1px #c0c0c0 solid;
+                border-collapse: collapse;
+                front-size:80%;
+            }
+            table.example caption{
+            padding-bottom: 5px;
+            }
+
+            table.example th,
+            table.example td{
+                padding: 6px 8px;
+                border: 1px #c0c0c0 solid;
+            }
+
+            table.example colgroup.item{
+                background-color: #fffce7;
+            }
+            table.example colgroup.data{
+                background-color: #ffffff;
+            }
+            table.example thead th{
+                background-color: #deefff;
+            }
         </style>
     </head>
 
     <body>
         <div id="map"></div>
         <button id="buttonBackToCenter">back to center</button>
-        <p id="interviewinfo">問診情報</p>
 
+        <table class="example">
+
+            <colgroup class="item"></colgroup>
+            <colgroup span="4" class="data"></colgroup>
+
+            <tbody>
+                <tr>
+                    <td>ID</th>
+                    <td id="table_id"></th>
+                </tr>
+                <tr>
+                    <td>緯度経度</th>
+                    <td id="table_latlng"></th>
+                </tr>
+                <tr>
+                    <td>状態</td>
+                    <td id="table_state"></td>
+                </tr>
+                <tr>
+                    <td>問診記録</td>
+                    <td id="table_records"></td>
+                </tr>
+                <tr>
+                    <td>応急手当</td>
+                    <td id="table_treats"></td>
+                </td>
+            </tbody>
+        </table>
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.js"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
@@ -35,10 +89,8 @@
             .setView(
                 mapCenterLatLng,
                 13
-            ).on('click', function(e) {
-                var c = e.latlng;
-                alert(c.lat+"/"+c.lng);
-            });
+            );
+
             L.tileLayer(
                 'https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', 
                 { attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors' }
@@ -51,24 +103,12 @@
             )
             .addTo(map)
             .bindPopup("<h3>Green marker</h3>")
-            .openPopup()
             .on("click", function(){
                 alert('marker is clicked');
             });
 
             //iconの要素にClassを追加
             L.DomUtil.addClass( marker._icon, 'leaflet-marker-icon-color-green' );
-
-            function removeAllMarkers(){
-                var marker3 = L.marker(
-                    [35.3748331, 130.9574997],
-                    { title: "marker-title" }
-                )
-                .addTo(map)
-                .bindPopup("<h3>other Red marker</h3>")
-                .openPopup();
-                L.DomUtil.addClass( marker3._icon, 'leaflet-marker-icon-color-red' );
-            }
 
             function backToCenter(){
                 map.panTo(mapCenterLatLng);
@@ -88,7 +128,7 @@
             var interviews = new Array();
             var interviewmessages = new Array();
 
-            function add_marker(patient_id, state, latlng, records){
+            function add_marker(patient_id, state, latlng, records, require_encode){
                 var icon = "";
                 switch (state){
                     case 1:
@@ -101,28 +141,39 @@
                         icon = 'leaflet-marker-icon-color-red';
                         break;
                 }
+
+                var text = "";
+                if(require_encode){
+                    for(var i = 0; i < records.length; i++){
+                        var record = records[i];
+                        for(var j = 0; j < record.length; j++){
+                            text += String(record[j]);
+                        }
+                        if (i == records.length-1){
+                            break;
+                        } else {
+                            text += ":";
+                        }
+                    }
+                } else {
+                    text += records;
+                }
+
                 var marker = L.marker(
                     latlng2list(latlng),
                     { title: "marker-title" }
                 )
                 .addTo(map)
                 .on("click", function(){
-                    var text = String(patient_id) + "\n" + latlng;
-                    for(var i = 0; i < records.length; i++){
-                        var record = records[i];
-                        text += "\n"
-                        for(var j = 0; j < record.length; j++){
-                            text += String(record[j])
-                        }
-                    }
-
-                    alert("marker is clicked" + text);
-                    $("#interviewinfo").text(String(patient_id));
+                    $("#table_id").text(String(patient_id));
+                    $("#table_latlng").text(String(latlng));
+                    $("#table_state").text(String(state));
+                    $("#table_records").text(String(text));
                 });
                 L.DomUtil.addClass( marker._icon, icon );
 
                 interviews[patient_id] = marker
-                interviewmessages[patient_id] = {"patient_id":patient_id, "state":state, "latlng":latlng}
+                interviewmessages[patient_id] = {"patient_id":patient_id, "state":state, "latlng":latlng, "records":text}
             }
 
             function delete_marker(msg){
@@ -132,7 +183,7 @@
 
             // add marker when it opens
             {% for marker in markers %}
-                add_marker({{ marker.patient_id }}, {{ marker.state }}, '{{ marker.latlng }}', {{ marker.interview_records }})
+                add_marker({{ marker.patient_id }}, {{ marker.state }}, '{{ marker.latlng }}', '{{ marker.interview_records }}', false)
             {% endfor %}
 
             namespace = "/map"
@@ -144,6 +195,7 @@
                     msg.state,
                     msg.latlng,
                     msg.interview_records,
+                    true
                 )
             });
 
@@ -158,7 +210,8 @@
                     msg.patient_id,
                     new_msg.state,
                     msg.latlng,
-                    msg.interview_records
+                    msg.records,
+                    false
                 )
             });
 
@@ -169,7 +222,6 @@
                 }
             });
             
-
         </script>
     </body>
 </html>
