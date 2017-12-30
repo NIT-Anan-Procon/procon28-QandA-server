@@ -335,20 +335,7 @@ def socketio_add_interview(patient_id, date, state, latlng, interview_records, t
         namespace=NAMESPACE_MAP)
     print(interview_records)
 
-@app.route("/addinterview")
-def add_InterviewDB():
-    global patient_id
-    patient_id += 1
-    date = "2017-12-23 12:34:56"
-    state = random.randint(1, 3)
-    state = 1
-    lat = random.uniform(33.904616008362325, 33.96713885277394)
-    lng = random.uniform(134.63041305541992, 134.7311782836914)
-    latlng = str(lat) + "/" + str(lng)
-    interview_scenario_id = 1
-    interview_record_texts = ["元気ですか,いいえ", "怪我をしましたか,はい"]
-    treat_ids = [1,2,3]
-    treat_ids_recommend = []
+def add_interview(patient_id, date, state, latlng, interview_scenario_id, interview_record_texts, treat_ids, treat_ids_recommend):
 
     interviewdata = InterviewData(
         patient_id=patient_id,
@@ -377,6 +364,34 @@ def add_InterviewDB():
     connection.commit()
 
     return "add marker : " + str(patient_id)
+
+@app.route("/start_interview", methods=['POST'])
+def start_interview():
+    bytes_data = request.data
+    str_data = bytes_data.decode('utf-8')
+    json_data = json.loads(str_data)
+    latlng = json_data["latlng"]
+
+    patient_id = random.randint(1,10)
+    add_interview(patient_id, " ", 1, latlng, -1, " ", [], [])
+    return str(patient_id)
+
+@app.route("/addinterview")
+def _addinterview():
+    global patient_id
+    patient_id += 1
+    date = "2017-12-23 12:34:56"
+    state = random.randint(1, 3)
+    state = 1
+    lat = random.uniform(33.904616008362325, 33.96713885277394)
+    lng = random.uniform(134.63041305541992, 134.7311782836914)
+    latlng = str(lat) + "/" + str(lng)
+    interview_scenario_id = 1
+    interview_record_texts = ["元気ですか,いいえ", "怪我をしましたか,はい"]
+    treat_ids = [1,2,3]
+    treat_ids_recommend = []
+
+    return add_interview(patient_id, date, state, latlng, interview_scenario_id, interview_record_texts, treat_ids, treat_ids_recommend)
 
 def socketio_delete_interview(patient_id):
     socketio.emit('delete a marker',
@@ -408,23 +423,38 @@ def socketio_change_state_interview(patient_id, state):
         },
         namespace=NAMESPACE_MAP)
 
+def _update_interview_state(patient_id, new_state):
+    socketio.start_background_task(target=socketio_change_state_interview,
+        patient_id=patient_id,
+        state=new_state
+    )
+    cur.execute("update interview set state = " + str(new_state) + " where patient_id = " + str(patient_id))
+    connection.commit()
+
+    return "change state : " + str(patient_id) + " to " + str(new_state)
+
+@app.route("/update_interview", methods=['POST'])
+def update_interview():
+    bytes_data = request.data
+    str_data = bytes_data.decode('utf-8')
+    json_data = json.loads(str_data)
+    patient_id = int(json_data["patient_id"])
+    new_state = int(json_data["state"])
+
+    _update_interview_state(patient_id, new_state)
+
+    return str(patient_id)
+
 @app.route("/changestateinterview/<int:new_state>")
-def change_state_InterviewDB(new_state):
+def _changestateinterview(new_state):
     if patient_id == 0:
         return "nothing to change"
 
     rand_id = random.randint(1, patient_id)
     state = random.randint(1, 3)
     state = new_state
-    socketio.start_background_task(target=socketio_change_state_interview,
-        patient_id=rand_id,
-        state=state
-    )
 
-    cur.execute("update interview set state = " + str(state) + " where patient_id = " + str(rand_id))
-    connection.commit()
-
-    return "change state : " + str(rand_id) + "/" + str(patient_id) + " to " + str(state)
+    return _update_interview_state(rand_id, state)
 
 @app.route("/map")
 def show_map():
@@ -480,6 +510,8 @@ def input():
 @socketio.on('add new interview', namespace=NAMESPACE_INTERVIEW)
 def new_interview(message):
     print(message['data'])
+
+
 
 
 if __name__ == "__main__":
