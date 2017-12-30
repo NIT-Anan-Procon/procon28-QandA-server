@@ -1,1 +1,0 @@
-{"class":[{"name":"3E", "score":"0"}, {"name":"3I", "score":"2"}], "field":"soft1", "event":"softball" }

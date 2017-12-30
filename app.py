@@ -165,7 +165,9 @@ def read_carelist():
             cares.append(row[1])
     return cares
 
-
+def get_care_name(care_id):
+    cares = read_carelist()
+    return cares[care_id][1]
 
 def get_answer(answer):
     if answer == "Y":
@@ -415,24 +417,26 @@ def delete_InterviewDB():
     patient_id -= 1
     return "delete marker : " + str(patient_id)
     
-def socketio_change_state_interview(patient_id, state):
+def socketio_change_state_interview(patient_id, state, interview_record_texts):
     socketio.emit('change the state',
         {
         'patient_id' : patient_id,
-        'state' : state
+        'state' : state,
+        'records' : interview_record_texts
         },
         namespace=NAMESPACE_MAP)
 
-def _update_interview_state(patient_id, new_state):
+def _update_interview_state(patient_id, new_state, interview_record_texts):
     cur.execute("select * from interview where patient_id = " + str(patient_id))
     x = cur.fetchone()
     print(x)
     if x is None:
         return "UNABLE TO UPDATE:THERE IS NO INTERVIEW WHOSE PATIENT_ID IS " + str(patient_id)
-        
+
     socketio.start_background_task(target=socketio_change_state_interview,
         patient_id=patient_id,
-        state=new_state
+        state=new_state,
+        interview_record_texts=interview_record_texts,
     )
     cur.execute("update interview set state = " + str(new_state) + " where patient_id = " + str(patient_id))
     connection.commit()
@@ -446,8 +450,9 @@ def update_interview():
     json_data = json.loads(str_data)
     patient_id = int(json_data["patient_id"])
     new_state = int(json_data["state"])
+    interview_record_texts = json_data["interview_records"]
 
-    return _update_interview_state(patient_id, new_state)
+    return _update_interview_state(patient_id, new_state, interview_record_texts)
 
 @app.route("/changestateinterview/<int:new_state>")
 def _changestateinterview(new_state):
@@ -458,7 +463,7 @@ def _changestateinterview(new_state):
     state = random.randint(1, 3)
     state = new_state
 
-    return _update_interview_state(rand_id, state)
+    return _update_interview_state(rand_id, state, "")
 
 @app.route("/map")
 def show_map():
