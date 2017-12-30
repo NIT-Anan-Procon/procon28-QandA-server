@@ -424,6 +424,12 @@ def socketio_change_state_interview(patient_id, state):
         namespace=NAMESPACE_MAP)
 
 def _update_interview_state(patient_id, new_state):
+    cur.execute("select * from interview where patient_id = " + str(patient_id))
+    x = cur.fetchone()
+    print(x)
+    if x is None:
+        return "UNABLE TO UPDATE:THERE IS NO INTERVIEW WHOSE PATIENT_ID IS " + str(patient_id)
+        
     socketio.start_background_task(target=socketio_change_state_interview,
         patient_id=patient_id,
         state=new_state
@@ -441,9 +447,7 @@ def update_interview():
     patient_id = int(json_data["patient_id"])
     new_state = int(json_data["state"])
 
-    _update_interview_state(patient_id, new_state)
-
-    return str(patient_id)
+    return _update_interview_state(patient_id, new_state)
 
 @app.route("/changestateinterview/<int:new_state>")
 def _changestateinterview(new_state):
