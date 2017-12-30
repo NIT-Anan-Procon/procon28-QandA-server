@@ -50,6 +50,18 @@ def insert_Interview(PATIENT_ID, LATLNG, STATE, INTERVIEW_SCENARIO_ID, INTERVIEW
     command += ")"
     return command
 
+def update_Interview(patient_id, interview_dict):
+    command = "update interview set "
+    keys = interview_dict.keys()
+    for i, key in enumerate(keys):
+        command += key
+        command += " = "
+        command += str(interview_dict[key])
+        if i < len(keys)-1:
+            command += ", "
+    command += " where patient_id = " + str(patient_id)
+    return command
+
 def insert_FireStation():
     command = "insert into FireStation values("
     command += "1, "

@@ -133,7 +133,7 @@ def read_carelist():
 
 def get_care_name(care_id):
     cares = read_carelist()
-    return cares[care_id][1]
+    return cares[care_id]
 
 def get_answer(answer):
     if answer == "Y":
@@ -287,7 +287,7 @@ def checkDB():
         time.sleep(1)
         print("finish counting")
 
-def socketio_add_interview(patient_id, date, state, latlng, interview_records, treat_ids, treat_ids_recommend):
+def socketio_add_interview(patient_id, date, state, latlng, interview_records, care_ids, care_ids_recommend):
     interview_records_ = []
     for val in list(map(json.dumps, interview_records)):
         interview_records_.append(val.encode('utf-8'))
@@ -299,6 +299,7 @@ def socketio_add_interview(patient_id, date, state, latlng, interview_records, t
         'state' : state,
         'latlng' : latlng,
         'interview_records' : interview_records,
+        'cares' : ":".join(list(map(get_care_name, care_ids)))
         },
         namespace=NAMESPACE_MAP)
     print(interview_records)
@@ -314,7 +315,7 @@ def add_interview(patient_id, date, state, latlng, interview_scenario_id, interv
         interview_record_texts=interview_record_texts,
         treat_ids=treat_ids,
         treat_ids_recommend=treat_ids_recommend
-        )
+    )
 
     interview_dict = interviewdata.get_dict()
     socketio.start_background_task(target=socketio_add_interview, 
@@ -323,8 +324,8 @@ def add_interview(patient_id, date, state, latlng, interview_scenario_id, interv
         state=interview_dict["state"],
         latlng=interview_dict["latlng"],
         interview_records=interview_record_texts,
-        treat_ids=interview_dict["treat_ids"],
-        treat_ids_recommend=interview_dict["treat_ids_recommend"],
+        care_ids=interview_dict["treat_ids"],
+        care_ids_recommend=interview_dict["treat_ids_recommend"],
     )
 
     command = accessDB.insert_Interview(patient_id, latlng, state, interview_scenario_id, interview_record_texts, treat_ids, treat_ids_recommend)
@@ -383,19 +384,19 @@ def delete_InterviewDB():
     patient_id -= 1
     return "delete marker : " + str(patient_id)
     
-def socketio_change_state_interview(patient_id, state, interview_record_texts):
+def socketio_change_state_interview(patient_id, state, interview_record_texts, cares):
     socketio.emit('change the state',
         {
         'patient_id' : patient_id,
         'state' : state,
-        'records' : interview_record_texts
+        'records' : interview_record_texts,
+        'cares' : cares,
         },
         namespace=NAMESPACE_MAP)
 
-def _update_interview_state(patient_id, new_state, interview_record_texts):
+def _update_interview_state(patient_id, new_state, interview_record_texts, care_ids):
     cur.execute("select * from interview where patient_id = " + str(patient_id))
     x = cur.fetchone()
-    print(x)
     if x is None:
         return "UNABLE TO UPDATE:THERE IS NO INTERVIEW WHOSE PATIENT_ID IS " + str(patient_id)
 
@@ -403,8 +404,18 @@ def _update_interview_state(patient_id, new_state, interview_record_texts):
         patient_id=patient_id,
         state=new_state,
         interview_record_texts=interview_record_texts,
+        cares=":".join(list(map(get_care_name, care_ids)))
     )
-    cur.execute("update interview set state = " + str(new_state) + " where patient_id = " + str(patient_id))
+
+    valid_array = lambda xs : str(xs) if len(xs) > 0 else str([-1])
+
+    interview_dict = {
+        "state" : new_state,
+        "interview_record" : "'" + interview_record_texts + "'",
+        "treat_ids" : "ARRAY" + str(valid_array(care_ids)),
+    }
+    command = accessDB.update_Interview(patient_id, interview_dict)
+    cur.execute(command)
     connection.commit()
 
     return "change state : " + str(patient_id) + " to " + str(new_state)
@@ -416,9 +427,10 @@ def update_interview():
     json_data = json.loads(str_data)
     patient_id = int(json_data["patient_id"])
     new_state = int(json_data["state"])
-    interview_record_texts = json_data["interview_records"]
+    interview_record_texts = json_data["interview_record"]
+    care_ids = json_data["cares"]
+    return _update_interview_state(patient_id, new_state, interview_record_texts, list(map(int, care_ids.split(","))))
 
-    return _update_interview_state(patient_id, new_state, interview_record_texts)
 
 @app.route("/changestateinterview/<int:new_state>")
 def _changestateinterview(new_state):
@@ -429,7 +441,7 @@ def _changestateinterview(new_state):
     state = random.randint(1, 3)
     state = new_state
 
-    return _update_interview_state(rand_id, state, "")
+    return _update_interview_state(rand_id, state, "", [])
 
 @app.route("/map")
 def show_map():
@@ -441,7 +453,7 @@ def show_map():
         latlng = row.split("/")
     print(latlng)
 
-    cur.execute("select patient_id, latlng, state from interview")
+    cur.execute("select patient_id, latlng, state, interview_record, treat_ids from interview")
     line = cur.fetchall()
     markers = []
 
@@ -450,10 +462,10 @@ def show_map():
             'patient_id' : row[0],
             'latlng' : row[1],
             'state' : row[2],
-            'interview_records':"元気ですか,いいえ:怪我をしましたか,はい",
+            'interview_records': row[3],
+            'cares' : ":".join(list(map(get_care_name, row[4])))
         }
         markers.append(dic)
-
 
     return render_template('map.html', latlng=latlng, markers=markers)
 

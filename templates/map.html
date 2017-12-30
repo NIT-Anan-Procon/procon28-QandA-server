@@ -71,7 +71,7 @@
                 </tr>
                 <tr>
                     <td>応急手当</td>
-                    <td id="table_treats"></td>
+                    <td id="table_cares"></td>
                 </td>
             </tbody>
         </table>
@@ -128,7 +128,7 @@
             var interviews = new Array();
             var interviewmessages = new Array();
 
-            function add_marker(patient_id, state, latlng, records, require_encode){
+            function add_marker(patient_id, state, latlng, records, cares, require_encode){
                 var icon = "";
                 switch (state){
                     case 1:
@@ -169,6 +169,8 @@
                     $("#table_latlng").text(String(latlng));
                     $("#table_state").text(String(state));
                     $("#table_records").text(String(text));
+                    $("#table_cares").text(String(cares));
+
                 });
                 L.DomUtil.addClass( marker._icon, icon );
 
@@ -183,7 +185,7 @@
 
             // add marker when it opens
             {% for marker in markers %}
-                add_marker({{ marker.patient_id }}, {{ marker.state }}, '{{ marker.latlng }}', '{{ marker.interview_records }}', false)
+                add_marker({{ marker.patient_id }}, {{ marker.state }}, '{{ marker.latlng }}', '{{ marker.interview_records }}', '{{ marker.cares }}', false)
             {% endfor %}
 
             namespace = "/map"
@@ -195,6 +197,7 @@
                     msg.state,
                     msg.latlng,
                     msg.interview_records,
+                    msg.cares,
                     true
                 )
             });
@@ -211,6 +214,7 @@
                     new_msg.state,
                     msg.latlng,
                     new_msg.records,
+                    new_msg.cares,
                     false
                 )
             });
