@@ -21,6 +21,7 @@ import random
 sys.path.append('src')
 import accessDB
 from interview import *
+from record import Record
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'ask'
@@ -61,41 +62,6 @@ print("host="+host+" port="+str(port)+" dbname="+dbname+" user="+user+" password
 connection = psycopg2.connect("host="+host+" port="+str(port)+" dbname="+dbname+" user="+user+" password="+password+"")
 connection.get_backend_pid()
 cur = connection.cursor()
-
-class Record:
-    
-    def __init__(self, record):
-        print(record)
-        self.tag = record['tag']
-        self.value = record['val']
-        self.time = record['time']
-        try:
-            self.tdatetime = dt.strptime(self.time, '%Y.%m.%d %H:%M:%S')
-        except:
-            self.tdatetime = None
-
-    def __str__(self):
-        res = "record -> "
-        res += "time:" + self.time
-        res += ", tag:" + self.tag 
-        res += ", value:" + self.value
-        return res
-
-    def is_head(self):
-        return self.tag == "start"
-
-    def is_scenario(self):
-        return self.tag == "sce"
-
-    def is_location(self):
-        return self.tag == "loc"
-
-    def is_care(self):
-        return self.tag == "Care"
-
-    def is_tail(self):
-        return self.tag == "end"
-
 
 
 @app.route("/")
@@ -519,8 +485,6 @@ def input():
 @socketio.on('add new interview', namespace=NAMESPACE_INTERVIEW)
 def new_interview(message):
     print(message['data'])
-
-
 
 
 if __name__ == "__main__":
