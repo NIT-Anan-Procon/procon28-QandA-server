@@ -117,6 +117,7 @@ def certification(getid):
 
 def get_scenario_file(scenario_id):
     cur.execute("select FILENAME from scenario where SCENARIO_ID = " + str(scenario_id))
+    print(scenario_id)
     filename = cur.fetchone()[0]
     return "scenarios/" + filename
 
@@ -417,11 +418,21 @@ def get_interview_record_text(scenario_id, record):
 
     return text
 
-def _update_interview_state(patient_id, new_state, interview_scenario_id, interview_record, care_ids):
+def _update_interview_state(patient_id, new_state=None, interview_scenario_id=None, interview_record=None, care_ids=None):
     cur.execute("select * from interview where patient_id = " + str(patient_id))
     x = cur.fetchone()
+    print(x)
     if x is None:
         return "UNABLE TO UPDATE:THERE IS NO INTERVIEW WHOSE PATIENT_ID IS " + str(patient_id)
+
+    if new_state is None:
+        new_state = x[3]
+    if interview_scenario_id is None:
+        interview_scenario_id = x[4]
+    if interview_record is None:
+        interview_record = x[5]
+    if care_ids is None:
+        care_ids = x[6]
 
     interview_record_texts = get_interview_record_text(interview_scenario_id, interview_record)
 
@@ -524,6 +535,21 @@ def input():
 @socketio.on('add new interview', namespace=NAMESPACE_INTERVIEW)
 def new_interview(message):
     print(message['data'])
+
+@app.route("/call119", methods=["POST"])
+def call119():
+    bytes_data = request.data  # bytes配列
+    str_data = bytes_data.decode('utf-8')  # 文字列に変換
+    json_data = json.loads(str_data)
+
+    patient_id = json_data["patient_id"]
+    cur.execute("select count(*) as total from Interview where patient_id = " + str(patient_id))
+    count = cur.fetchall()[0][0]
+    if count is 1:
+        _update_interview_state(patient_id, 3)
+        return "call 119"
+    else:
+        return "wrong ID"
 
 
 if __name__ == "__main__":
