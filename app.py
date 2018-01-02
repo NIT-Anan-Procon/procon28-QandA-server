@@ -115,7 +115,16 @@ def certification(getid):
 
     return render_template('certification.html', start_at=start_at, end_at=end_at, num=getid, contents=contents, address=address[13:], cares=cares)
 
-def read_scenario(scenario):
+def get_scenario_file(scenario_id):
+    cur.execute("select FILENAME from scenario where SCENARIO_ID = " + str(scenario_id))
+    filename = cur.fetchone()[0]
+    return "scenarios/" + filename
+
+def read_scenario(scenario=None, scenario_id=None):
+
+    if scenario is None:
+        scenario = get_scenario_file(scenario_id)
+
     questions = []
     with open(scenario,  newline='') as f:
         dataReader = csv.reader(f)
@@ -394,11 +403,27 @@ def socketio_change_state_interview(patient_id, state, interview_record_texts, c
         },
         namespace=NAMESPACE_MAP)
 
-def _update_interview_state(patient_id, new_state, interview_record_texts, care_ids):
+def get_interview_record_text(scenario_id, record):
+    scenario = read_scenario(scenario_id=scenario_id)
+    records = record.split(",")
+
+    text = ""
+    for record in records:
+        question = scenario[int(record[:-1])][1]
+        answer = get_answer(record[-1])
+        print(question, answer)
+        text += question + "," + answer
+        text += ":"
+
+    return text
+
+def _update_interview_state(patient_id, new_state, interview_scenario_id, interview_record, care_ids):
     cur.execute("select * from interview where patient_id = " + str(patient_id))
     x = cur.fetchone()
     if x is None:
         return "UNABLE TO UPDATE:THERE IS NO INTERVIEW WHOSE PATIENT_ID IS " + str(patient_id)
+
+    interview_record_texts = get_interview_record_text(interview_scenario_id, interview_record)
 
     socketio.start_background_task(target=socketio_change_state_interview,
         patient_id=patient_id,
@@ -411,7 +436,8 @@ def _update_interview_state(patient_id, new_state, interview_record_texts, care_
 
     interview_dict = {
         "state" : new_state,
-        "interview_record" : "'" + interview_record_texts + "'",
+        "interview_scenario_id" : interview_scenario_id,
+        "interview_record" : "'" + interview_record + "'",
         "care_ids" : "ARRAY" + str(valid_array(care_ids)),
     }
     command = accessDB.update_Interview(patient_id, interview_dict)
@@ -427,9 +453,10 @@ def update_interview():
     json_data = json.loads(str_data)
     patient_id = int(json_data["patient_id"])
     new_state = int(json_data["state"])
-    interview_record_texts = json_data["interview_record"]
+    interview_record = json_data["interview_record"]
+    interview_scenario_id = json_data["scenario"]
     care_ids = json_data["cares"]
-    return _update_interview_state(patient_id, new_state, interview_record_texts, list(map(int, care_ids.split(","))))
+    return _update_interview_state(patient_id, new_state, interview_scenario_id, interview_record, list(map(int, care_ids.split(","))))
 
 
 @app.route("/changestateinterview/<int:new_state>")
@@ -441,7 +468,7 @@ def _changestateinterview(new_state):
     state = random.randint(1, 3)
     state = new_state
 
-    return _update_interview_state(rand_id, state, "", [])
+    return _update_interview_state(rand_id, state, 0, "", [])
 
 @app.route("/map")
 def show_map():

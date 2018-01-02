@@ -46,9 +46,16 @@ def create_Interview():
     command += ")"
     return command
 
+def create_Scenario():
+    command = "create table scenario("
+    command += "SCENARIO_ID integer, "
+    command += "FILENAME text"
+    command += ")"
+    return command
+
 
 def execute():
-    command = create_Interview()
+    command = create_Scenario()
     print(command)
     cur.execute(command)
     connection.commit()

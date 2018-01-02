@@ -50,6 +50,13 @@ def insert_Interview(PATIENT_ID, LATLNG, STATE, INTERVIEW_SCENARIO_ID, INTERVIEW
     command += ")"
     return command
 
+def insert_Scenario(SCENARIO_ID, FILENAME):
+    command = 'insert into scenario values('
+    command += str(SCENARIO_ID) + ", "
+    command += FILENAME
+    command += ')'
+    return command
+
 def update_Interview(patient_id, interview_dict):
     command = "update interview set "
     keys = interview_dict.keys()
