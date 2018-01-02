@@ -102,13 +102,12 @@
                 { title: "marker-title" }
             )
             .addTo(map)
-            .bindPopup("<h3>Green marker</h3>")
             .on("click", function(){
-                alert('marker is clicked');
+                alert('Your FireStation');
             });
 
             //iconの要素にClassを追加
-            L.DomUtil.addClass( marker._icon, 'leaflet-marker-icon-color-green' );
+            L.DomUtil.addClass( marker._icon, 'leaflet-marker-icon-color-pink' );
 
             function backToCenter(){
                 map.panTo(mapCenterLatLng);
