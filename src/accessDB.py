@@ -25,15 +25,15 @@ def valid_list(l):
     else:
         return l
 
-def insert_Interview(PATIENT_ID, LATLNG, STATE, INTERVIEW_SCENARIO_ID, INTERVIEW_RECOEDs, TREAT_IDs, TREAT_IDs_RECOMMEND):
+def insert_Interview(PATIENT_ID, LATLNG, STATE, INTERVIEW_SCENARIO_ID, INTERVIEW_RECOEDs, CARE_IDs, CARE_IDs_RECOMMEND):
     """
     INTERVIEW_ID : int
     LATLNG : text (lat/lng)
     STATE : int
     INTERVIEW_SCENARIO_ID : int
     INTERVIEW_RECOED : 
-    TREAT_IDs : [int]
-    TREAT_IDs_RECOMMEND : [int]
+    CARE_IDs : [int]
+    CARE_IDs_RECOMMEND : [int]
     """
     array2text = lambda values : "ARRAY[" + ",".join(list(map(str, valid_list(values)))) + "]"
     interviewrecords2text = lambda records : ",".join(records)
@@ -45,8 +45,8 @@ def insert_Interview(PATIENT_ID, LATLNG, STATE, INTERVIEW_SCENARIO_ID, INTERVIEW
     command += str(STATE) + ", "
     command += str(INTERVIEW_SCENARIO_ID) + ", "
     command += "'" + interviewrecords2text(INTERVIEW_RECOEDs) + "', "
-    command += array2text(TREAT_IDs)  + ", "
-    command += array2text(TREAT_IDs_RECOMMEND)
+    command += array2text(CARE_IDs)  + ", "
+    command += array2text(CARE_IDs_RECOMMEND)
     command += ")"
     return command
 

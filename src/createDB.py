@@ -41,14 +41,18 @@ def create_Interview():
     command += "STATE integer, "
     command += "INTERVIEW_SCENARIO_ID integer, "
     command += "INTERVIEW_RECORD text, "
-    command += "TREAT_IDs integer[], "
-    command += "TREAT_IDs_RECOMMEND integer[]"
+    command += "CARE_IDs integer[], "
+    command += "CARE_IDs_RECOMMEND integer[]"
     command += ")"
     return command
 
 
 def execute():
-    print(create_Interview())
+    command = create_Interview()
+    print(command)
+    cur.execute(command)
+    connection.commit()
+
 
 if __name__ == '__main__':
 

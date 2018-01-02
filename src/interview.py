@@ -10,15 +10,15 @@ class InterviewRecord:
 
 
 class InterviewData:
-    def __init__(self, patient_id, date, state, latlng, interview_scenario_id, interview_record_texts, treat_ids, treat_ids_recommend):
+    def __init__(self, patient_id, date, state, latlng, interview_scenario_id, interview_record_texts, care_ids, care_ids_recommend):
         """
         patient_id : int
         date : string '%Y年%m月%d日 %H時%M分'
         latlng : text (lat/lng)
         interview_scenario_id : int
         interview_records_text : [text]
-        treat_ids : [int]
-        treat_ids_recommend : [int]
+        care_ids : [int]
+        care_ids_recommend : [int]
         """
 
         self.patient_id = patient_id
@@ -27,8 +27,8 @@ class InterviewData:
         self.latlng = latlng
         self.interview_scenario_id = interview_scenario_id
         self.interview_records = self.convert_interviewrecord(interview_record_texts)
-        self.treat_ids = treat_ids
-        self.treat_ids_recommend = treat_ids_recommend
+        self.care_ids = care_ids
+        self.care_ids_recommend = care_ids_recommend
 
     def convert_interviewrecord(self, interview_record_texts):
         interview_records = []
@@ -44,8 +44,8 @@ class InterviewData:
             "latlng" : self.latlng,
             "interview_scenario_id" : self.interview_scenario_id,
             "interview_records" : self.interview_records,
-            "treat_ids" : self.treat_ids,
-            "treat_ids_recommend" : self.treat_ids_recommend,
+            "care_ids" : self.care_ids,
+            "care_ids_recommend" : self.care_ids_recommend,
         }
 
         return interview_dict
