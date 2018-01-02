@@ -480,7 +480,7 @@ def show_map():
         latlng = row.split("/")
     print(latlng)
 
-    cur.execute("select patient_id, latlng, state, interview_record, care_ids from interview")
+    cur.execute("select patient_id, latlng, state, interview_scenario_id, interview_record, care_ids from interview")
     line = cur.fetchall()
     markers = []
 
@@ -489,8 +489,8 @@ def show_map():
             'patient_id' : row[0],
             'latlng' : row[1],
             'state' : row[2],
-            'interview_records': row[3],
-            'cares' : ":".join(list(map(get_care_name, row[4])))
+            'interview_records': get_interview_record_text(row[3], row[4]),
+            'cares' : ":".join(list(map(get_care_name, row[5])))
         }
         markers.append(dic)
 
