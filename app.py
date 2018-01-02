@@ -304,7 +304,7 @@ def socketio_add_interview(patient_id, date, state, latlng, interview_records, c
         namespace=NAMESPACE_MAP)
     print(interview_records)
 
-def add_interview(patient_id, date, state, latlng, interview_scenario_id, interview_record_texts, treat_ids, treat_ids_recommend):
+def add_interview(patient_id, date, state, latlng, interview_scenario_id, interview_record_texts, care_ids, care_ids_recommend):
 
     interviewdata = InterviewData(
         patient_id=patient_id,
@@ -313,8 +313,8 @@ def add_interview(patient_id, date, state, latlng, interview_scenario_id, interv
         latlng=latlng,
         interview_scenario_id=interview_scenario_id,
         interview_record_texts=interview_record_texts,
-        treat_ids=treat_ids,
-        treat_ids_recommend=treat_ids_recommend
+        care_ids=care_ids,
+        care_ids_recommend=care_ids_recommend
     )
 
     interview_dict = interviewdata.get_dict()
@@ -324,11 +324,11 @@ def add_interview(patient_id, date, state, latlng, interview_scenario_id, interv
         state=interview_dict["state"],
         latlng=interview_dict["latlng"],
         interview_records=interview_record_texts,
-        care_ids=interview_dict["treat_ids"],
-        care_ids_recommend=interview_dict["treat_ids_recommend"],
+        care_ids=interview_dict["care_ids"],
+        care_ids_recommend=interview_dict["care_ids_recommend"],
     )
 
-    command = accessDB.insert_Interview(patient_id, latlng, state, interview_scenario_id, interview_record_texts, treat_ids, treat_ids_recommend)
+    command = accessDB.insert_Interview(patient_id, latlng, state, interview_scenario_id, interview_record_texts, care_ids, care_ids_recommend)
     cur.execute(command)
     connection.commit()
 
@@ -357,10 +357,10 @@ def _addinterview():
     latlng = str(lat) + "/" + str(lng)
     interview_scenario_id = 1
     interview_record_texts = ["元気ですか,いいえ", "怪我をしましたか,はい"]
-    treat_ids = [1,2,3]
-    treat_ids_recommend = []
+    care_ids = [1,2,3]
+    care_ids_recommend = []
 
-    return add_interview(patient_id, date, state, latlng, interview_scenario_id, interview_record_texts, treat_ids, treat_ids_recommend)
+    return add_interview(patient_id, date, state, latlng, interview_scenario_id, interview_record_texts, care_ids, care_ids_recommend)
 
 def socketio_delete_interview(patient_id):
     socketio.emit('delete a marker',
@@ -412,7 +412,7 @@ def _update_interview_state(patient_id, new_state, interview_record_texts, care_
     interview_dict = {
         "state" : new_state,
         "interview_record" : "'" + interview_record_texts + "'",
-        "treat_ids" : "ARRAY" + str(valid_array(care_ids)),
+        "care_ids" : "ARRAY" + str(valid_array(care_ids)),
     }
     command = accessDB.update_Interview(patient_id, interview_dict)
     cur.execute(command)
@@ -453,7 +453,7 @@ def show_map():
         latlng = row.split("/")
     print(latlng)
 
-    cur.execute("select patient_id, latlng, state, interview_record, treat_ids from interview")
+    cur.execute("select patient_id, latlng, state, interview_record, care_ids from interview")
     line = cur.fetchall()
     markers = []
 
