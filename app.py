@@ -119,6 +119,7 @@ def get_scenario_file(scenario_id):
     cur.execute("select FILENAME from scenario where SCENARIO_ID = " + str(scenario_id))
     print(scenario_id)
     filename = cur.fetchone()[0]
+    print("filename is " + filename)
     return "scenarios/" + filename
 
 def read_scenario(scenario=None, scenario_id=None):

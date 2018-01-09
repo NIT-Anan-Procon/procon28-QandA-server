@@ -67,7 +67,9 @@
                 </tr>
                 <tr>
                     <td>問診記録</td>
-                    <td id="table_records"></td>
+                    <td id="table_records" style="word-wrap:break-word;">
+                        <ul id="table_records_list" style="list-style:none;" />
+                    </td>
                 </tr>
                 <tr>
                     <td>応急手当</td>
@@ -141,22 +143,32 @@
                         break;
                 }
 
-                var text = "";
+                var records_ = new Array();
+
+                //encode is required when records is sent via socketio
                 if(require_encode){
+                    $("#table_records").text("encode");
                     for(var i = 0; i < records.length; i++){
                         var record = records[i];
+                        var text = "";
                         for(var j = 0; j < record.length; j++){
                             text += String(record[j]);
                         }
                         if (i == records.length-1){
                             break;
                         } else {
-                            text += "</br>";
+
                         }
+
+                        records_.push(text);
                     }
                 } else {
-                    text += records;
+                    records_ = records.split(":");
+                    //$("#table_records").text(records_[0]);
                 }
+
+
+
 
                 var marker = L.marker(
                     latlng2list(latlng),
@@ -167,14 +179,26 @@
                     $("#table_id").text(String(patient_id));
                     $("#table_latlng").text(String(latlng));
                     $("#table_state").text(String(state));
-                    $("#table_records").text(String(text));
                     $("#table_cares").text(String(cares));
+
+
+                    var ul = document.getElementById("table_records_list");
+                    $("#table_records_list").empty('');
+                    
+
+                    for (i = 0; i < records_.length; i++){
+                        var record = records_[i]
+                        var li = document.createElement('li');
+                        li.appendChild(document.createTextNode(record));
+                        ul.appendChild(li);
+                    }
 
                 });
                 L.DomUtil.addClass( marker._icon, icon );
 
                 interviews[patient_id] = marker
                 interviewmessages[patient_id] = {"patient_id":patient_id, "state":state, "latlng":latlng, "records":text}
+
             }
 
             function delete_marker(msg){

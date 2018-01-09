@@ -1,3 +1,5 @@
+.gitignore
 documents
 /tmp/
 src/__pycash__/
+
