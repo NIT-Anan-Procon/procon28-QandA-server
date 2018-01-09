@@ -551,6 +551,22 @@ def call119():
     else:
         return "wrong ID"
 
+@app.route("/end119", methods=["POST"])
+def end119():
+    bytes_data = request.data  # bytes配列
+    str_data = bytes_data.decode('utf-8')  # 文字列に変換
+    json_data = json.loads(str_data)
+
+    patient_id = json_data["patient_id"]
+    cur.execute("select count(*) as total from Interview where patient_id = " + str(patient_id))
+    count = cur.fetchall()[0][0]
+    if count is 1:
+        _update_interview_state(patient_id, 2)
+        return "end 119"
+    else:
+        return "wrong ID"
+
+
 
 if __name__ == "__main__":
     arg_parser = ArgumentParser(
