@@ -105,8 +105,15 @@ if __name__ == '__main__':
         password = "7735ffd9623f5372ad5e8db15cd70bedfc7a9c9edbc033f1b21c419e4f4a1e02"
 
 
+    print(host)
     connection = psycopg2.connect("host="+host+" port="+str(port)+" dbname="+dbname+" user="+user+" password="+password+"")
     connection.get_backend_pid()
     cur = connection.cursor()
 
-    insert_FireStation()
+    command = insert_Scenario(0, "'ill_1003.csv'")
+    #command = insert_Scenario(1, "'kega_1003.csv'")
+    command = "select * from scenario"
+    print(command)
+    cur.execute(command)
+    print(cur.fetchall())
+    connection.commit()

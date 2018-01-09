@@ -55,7 +55,17 @@ def create_Scenario():
 
 
 def execute():
+    command = create_FS()
+    print(command)
+    cur.execute(command)
+    connection.commit()
+
     command = create_Scenario()
+    print(command)
+    cur.execute(command)
+    connection.commit()
+
+    command = create_Interview()
     print(command)
     cur.execute(command)
     connection.commit()
@@ -63,7 +73,8 @@ def execute():
 
 if __name__ == '__main__':
 
-    NAME = os.getenv('NAME', 'localQAserver')
+    #NAME = os.getenv('NAME', 'localQAserver')
+    NAME = os.getenv('NAME', 'herokuQAserver')
     if NAME == 'localQAserver':
         host = "localhost"
         port = 5432
@@ -79,7 +90,7 @@ if __name__ == '__main__':
 
 
     connection = psycopg2.connect("host="+host+" port="+str(port)+" dbname="+dbname+" user="+user+" password="+password+"")
-    connection.get_backend_pid()
+    print(connection.get_backend_pid())
     cur = connection.cursor()
 
     execute()
