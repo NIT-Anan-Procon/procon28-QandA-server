@@ -73,7 +73,9 @@
                 </tr>
                 <tr>
                     <td>応急手当</td>
-                    <td id="table_cares"></td>
+                    <td id="table_cares">
+                        <ul id="table_cares_list" style="list-style:none;" />
+                    </td>
                 </td>
             </tbody>
         </table>
@@ -164,7 +166,6 @@
                     }
                 } else {
                     records_ = records.split(":");
-                    //$("#table_records").text(records_[0]);
                 }
 
 
@@ -179,12 +180,23 @@
                     $("#table_id").text(String(patient_id));
                     $("#table_latlng").text(String(latlng));
                     $("#table_state").text(String(state));
-                    $("#table_cares").text(String(cares));
+                    //$("#table_cares").text(cares);
 
+
+                    var ul = document.getElementById("table_cares_list");
+                    $("#table_cares_list").empty('');
+                    
+                    cares_list = cares.split(":");
+                    for (i = 0; i < cares_list.length; i++){
+                        var care = cares_list[i];
+                        var li = document.createElement('li');
+                        li.appendChild(document.createTextNode(care));
+                        ul.appendChild(li);
+
+                    }
 
                     var ul = document.getElementById("table_records_list");
                     $("#table_records_list").empty('');
-                    
 
                     for (i = 0; i < records_.length; i++){
                         var record = records_[i]
