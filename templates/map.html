@@ -149,7 +149,6 @@
 
                 //encode is required when records is sent via socketio
                 if(require_encode){
-                    $("#table_records").text("encode");
                     for(var i = 0; i < records.length; i++){
                         var record = records[i];
                         var text = "";
@@ -180,8 +179,6 @@
                     $("#table_id").text(String(patient_id));
                     $("#table_latlng").text(String(latlng));
                     $("#table_state").text(String(state));
-                    //$("#table_cares").text(cares);
-
 
                     var ul = document.getElementById("table_cares_list");
                     $("#table_cares_list").empty('');
@@ -192,7 +189,6 @@
                         var li = document.createElement('li');
                         li.appendChild(document.createTextNode(care));
                         ul.appendChild(li);
-
                     }
 
                     var ul = document.getElementById("table_records_list");
