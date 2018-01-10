@@ -118,7 +118,11 @@ def certification(getid):
 def get_scenario_file(scenario_id):
     cur.execute("select FILENAME from scenario where SCENARIO_ID = " + str(scenario_id))
     print(scenario_id)
-    filename = cur.fetchone()[0]
+    print(len(cur.fetchall()))
+    if(len(cur.fetchall()) is 0):
+        filename = "ill_1003.csv"
+    else:
+        filename = cur.fetchone()[0]
     print("filename is " + filename)
     return "scenarios/" + filename
 
@@ -411,6 +415,9 @@ def get_interview_record_text(scenario_id, record):
 
     text = ""
     for record in records:
+        print("record is '" + str(record) + "'")
+        if record is " ":
+            continue
         question = scenario[int(record[:-1])][1]
         answer = get_answer(record[-1])
         print(question, answer)
