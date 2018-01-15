@@ -152,6 +152,9 @@ def get_care_name(care_id):
     cares = read_carelist()
     return cares[care_id]
 
+def get_all_cares():
+    return read_carelist()
+
 def get_answer(answer):
     if answer == "Y":
         return "はい"
@@ -522,7 +525,8 @@ def show_map():
         }
         markers.append(dic)
 
-    return render_template('map.html', latlng=latlng, markers=markers)
+    print(get_all_cares())
+    return render_template('map.html', latlng=latlng, markers=markers, cares=get_all_cares())
 
 def reset_all_interview(patient_ids):
     socketio.emit('delete all markers',

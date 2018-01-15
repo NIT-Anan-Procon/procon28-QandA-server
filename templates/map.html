@@ -50,23 +50,25 @@
             </table>
         </div>
         <div class="blockb">
-          <p><big>応急手当て情報送信欄</p>
-          <p>
-          <select id="listbox_recommend_care" size="4"  style="width:25%;height:45%" multiple>
-            <div class="center">
-              <option value="0">胸骨圧迫</option>
-              <option value="1">気道確保</option>
-              <option value="2">回復体位</option>
-              <option value="3">熱中症</option>
-              <option value="4">骨折</option>
-              <option value="5">止血</option>
-              <option value="6">気道異物除去</option>
-          </div>
-          </p>
-          <p>
-            <textarea  rows="7" cols="30" wrap="" id="textarea_comment" style="width:25%;height:20%"></textarea><br>
-            <input type="submit" value="送信" id="button_cue" style="width:15%;height:5%"/>
-          </p>
+            <p><big>応急手当て情報送信欄</p>
+            <p>
+                <select id="listbox_recommend_care" size="4"  style="width:25%;height:45%" multiple>
+                <div class="center">
+                    <!--
+                    <option value="0">胸骨圧迫</option>
+                    <option value="1">気道確保</option>
+                    <option value="2">回復体位</option>
+                    <option value="3">熱中症</option>
+                    <option value="4">骨折</option>
+                    <option value="5">止血</option>
+                    <option value="6">気道異物除去</option>
+                    -->
+                </div>
+            </p>
+            <p>
+                <textarea  rows="7" cols="30" wrap="" id="textarea_comment" style="width:25%;height:20%"></textarea><br>
+                <input type="submit" value="送信" id="button_cue" style="width:15%;height:5%"/>
+            </p>
         </div>
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/leaflet.js"></script>
@@ -77,8 +79,9 @@
         <script type="text/javascript" src="static/map_marker.js"></script>
         <script type="text/javascript">
 
-            var mapCenterLatLng = ['{{ latlng[0] }}', '{{ latlng[1] }}'];
 
+
+            var mapCenterLatLng = ['{{ latlng[0] }}', '{{ latlng[1] }}'];
 
             //地図タイルの設定
             var map = L.map('map')
@@ -115,6 +118,17 @@
             // add marker when it opens
             {% for marker in markers %}
                 add_marker({{ marker.patient_id }}, {{ marker.state }}, '{{ marker.latlng }}', '{{ marker.interview_records }}', '{{ marker.cares }}', '{{ marker.address }}', false)
+            {% endfor %}
+
+            var count = 0;
+            {% for care in cares %}
+                var select = document.getElementById('listbox_recommend_care');
+                var option = document.createElement('option');
+                 
+                option.setAttribute('value', String(count));
+                count += 1;
+                option.innerHTML = '{{care}}';
+                select.appendChild(option);
             {% endfor %}
             
         </script>
