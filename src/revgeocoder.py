@@ -10,6 +10,7 @@ Area = collections.namedtuple('Area', ['area_id', 'polygon'])
 class ReverseGeocoder():
     def __init__(self):
         self.idx = index.Index()
+        print(self.idx)
 
     def insert_from_iterator(self, itr):
         for i, (area_id, polygon) in enumerate(itr):
