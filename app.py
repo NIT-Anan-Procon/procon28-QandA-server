@@ -22,6 +22,7 @@ sys.path.append('src')
 import accessDB
 from interview import *
 from record import Record
+from revgeocoder import ReverseGeocoder
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'ask'
@@ -63,6 +64,7 @@ connection = psycopg2.connect("host="+host+" port="+str(port)+" dbname="+dbname+
 connection.get_backend_pid()
 cur = connection.cursor()
 
+revgeo = ReverseGeocoder()
 
 @app.route("/")
 def index():
