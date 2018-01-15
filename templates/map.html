@@ -21,6 +21,10 @@
                     <td id="table_id"></th>
                 </tr>
                 <tr>
+                    <td>住所</th>
+                    <td id="table_address"></th>
+                </tr>
+                <tr>
                     <td>緯度経度</th>
                     <td id="table_latlng"></th>
                 </tr>
@@ -88,7 +92,7 @@
             
             // add marker when it opens
             {% for marker in markers %}
-                add_marker({{ marker.patient_id }}, {{ marker.state }}, '{{ marker.latlng }}', '{{ marker.interview_records }}', '{{ marker.cares }}', false)
+                add_marker({{ marker.patient_id }}, {{ marker.state }}, '{{ marker.latlng }}', '{{ marker.interview_records }}', '{{ marker.cares }}', '{{ marker.address }}', false)
             {% endfor %}
             
         </script>

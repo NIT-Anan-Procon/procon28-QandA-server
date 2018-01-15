@@ -8,7 +8,16 @@ function latlng2list(latlng){
     return [lat, lng];
 }
 
-function add_marker(patient_id, state, latlng, records, cares, require_encode){
+function encode(text){
+    var answer = "";
+    var text = "";
+    for(var j = 0; j < text.length; j++){
+        answer += String(text[j]);
+    }
+    return answer;
+}
+
+function add_marker(patient_id, state, latlng, records, cares, address, require_encode){
     var icon = "";
     switch (state){
         case 1:
@@ -53,6 +62,7 @@ function add_marker(patient_id, state, latlng, records, cares, require_encode){
         $("#table_id").text(String(patient_id));
         $("#table_latlng").text(String(latlng));
         $("#table_state").text(String(state));
+        $("#table_address").text(address);
 
         var ul = document.getElementById("table_cares_list");
         $("#table_cares_list").empty('');

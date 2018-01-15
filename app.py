@@ -311,6 +311,8 @@ def socketio_add_interview(patient_id, date, state, latlng, interview_records, c
     for val in list(map(json.dumps, interview_records)):
         interview_records_.append(val.encode('utf-8'))
 
+    print("address : " +address(latlng.replace("/", ":")))
+    print("cares   : " + ":".join(list(map(get_care_name, care_ids))),)
     socketio.emit('add new marker',
         {
         'patient_id' : patient_id,
@@ -318,7 +320,8 @@ def socketio_add_interview(patient_id, date, state, latlng, interview_records, c
         'state' : state,
         'latlng' : latlng,
         'interview_records' : interview_records,
-        'cares' : ":".join(list(map(get_care_name, care_ids)))
+        'cares' : ":".join(list(map(get_care_name, care_ids))),
+        'address' : address(latlng.replace("/", ":"))
         },
         namespace=NAMESPACE_MAP)
     print(interview_records)
@@ -362,6 +365,7 @@ def start_interview():
 
     patient_id = random.randint(1,10)
     add_interview(patient_id, " ", 1, latlng, -1, " ", [], [])
+    print(patient_id)
     return str(patient_id)
 
 @app.route("/addinterview")
@@ -515,7 +519,8 @@ def show_map():
             'latlng' : row[1],
             'state' : row[2],
             'interview_records': get_interview_record_text(row[3], row[4]),
-            'cares' : ":".join(list(map(get_care_name, row[5])))
+            'cares' : ":".join(list(map(get_care_name, row[5]))),
+            'address' : address(row[1].replace("/", ":"))
         }
         markers.append(dic)
 

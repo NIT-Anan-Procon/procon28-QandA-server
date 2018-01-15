@@ -9,6 +9,7 @@ socket.on('add new marker', function(msg) {
         msg.latlng,
         msg.interview_records,
         msg.cares,
+        msg.address,
         true
     )
 });
@@ -26,6 +27,7 @@ socket.on('change the state', function(new_msg) {
         msg.latlng,
         new_msg.records,
         new_msg.cares,
+        new_msg.address,
         false
     )
 });
