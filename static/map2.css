@@ -1,0 +1,61 @@
+<style type="text/css">
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF_8">
+<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+
+html { width: 100%; height: 100%; }
+body { width: 100%; height: 100%; margin: 15; }
+div.blocka {
+  float: left;
+  width: 70%;
+}
+
+#map { width: 90%; height: 60%; }
+.leaflet-marker-icon-color-blue   { -webkit-filter: hue-rotate( 30deg); filter: hue-rotate( 30deg); }
+.leaflet-marker-icon-color-pink   { -webkit-filter: hue-rotate( 90deg); filter: hue-rotate( 90deg); }
+.leaflet-marker-icon-color-red    { -webkit-filter: hue-rotate(150deg); filter: hue-rotate(150deg); }
+.leaflet-marker-icon-color-yellow { -webkit-filter: hue-rotate(210deg); filter: hue-rotate(210deg); }
+.leaflet-marker-icon-color-green  { -webkit-filter: hue-rotate(270deg); filter: hue-rotate(270deg); }
+.leaflet-marker-icon-color-alua   { -webkit-filter: hue-rotate(330deg); filter: hue-rotate(330deg); }
+table.example{
+  width:80%;/*表の幅*/
+  margin-left: 20;
+  border:1px #c0c0c0 solid;/*大枠の境界線*/
+  border-collapse: collapse;
+  front-size:80%;
+}
+
+/*表のタイトル*/
+table.example caption{
+  padding-bottom: 5px;/*表のタイトル下パッティング*/
+}
+/*セル*/
+table.example th,
+table.example td{
+  /*width:20%(セルの幅を均等にする場合)*/
+  padding: 6px 8px;/*セルの（上下、左右）*/
+  border: 1px #c0c0c0 solid;/*セルの境界線*/
+}
+/*1列目*/
+table.example colgroup.item{
+  background-color: #fffce7;/*１列目の背景色*/
+}
+/*２列目以降*/
+table.example colgroup.data{
+  background-color: #ffffff;/*２列目以降の背景色*/
+}
+/*見出しセル*/
+table.example thead th{
+  background-color: #deefff;/*見出しセルの背景色*/
+}
+select{
+  font-size: 150%;
+}
+.center {
+   text-align: center;
+
+}
+
+</style>
