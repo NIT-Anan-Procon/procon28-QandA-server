@@ -1,36 +1,40 @@
+
 html { width: 100%; height: 100%; }
-body { width: 100%; height: 100%; margin: 0; }
-#map { width: 70%; height: 60%; }
-.leaflet-marker-icon-color-blue   { -webkit-filter: hue-rotate( 30deg); filter: hue-rotate( 30deg); }
-.leaflet-marker-icon-color-pink   { -webkit-filter: hue-rotate(100deg); filter: hue-rotate(100deg); }
-.leaflet-marker-icon-color-red    { -webkit-filter: hue-rotate(150deg); filter: hue-rotate(150deg); }
-.leaflet-marker-icon-color-yellow { -webkit-filter: hue-rotate(180deg); filter: hue-rotate(180deg); }
-.leaflet-marker-icon-color-green  { -webkit-filter: hue-rotate(270deg); filter: hue-rotate(270deg); }
-.leaflet-marker-icon-color-alua   { -webkit-filter: hue-rotate(330deg); filter: hue-rotate(330deg); }
+body { width: 100%; height: 100%; margin: 15; }
+div.blocka {
+  float: left;
+  width: 70%;
+}
 
 table.example{
-    width:920px;
-    margin-left: 20;
-    border:1px #c0c0c0 solid;
-    border-collapse: collapse;
-    front-size:80%;
+  width:80%;/*表の幅*/
+  margin-left: 20;
+  border:1px #c0c0c0 solid;/*大枠の境界線*/
+  border-collapse: collapse;
+  front-size:80%;
 }
 table.example caption{
-padding-bottom: 5px;
+  padding-bottom: 5px;
 }
 
 table.example th,
 table.example td{
-    padding: 6px 8px;
-    border: 1px #c0c0c0 solid;
+  /*width:20%(セルの幅を均等にする場合)*/
+  padding: 6px 8px;/*セルの（上下、左右）*/
+  border: 1px #c0c0c0 solid;/*セルの境界線*/
 }
-
 table.example colgroup.item{
-    background-color: #fffce7;
+  background-color: #fffce7;
 }
 table.example colgroup.data{
-    background-color: #ffffff;
+  background-color: #ffffff;
 }
 table.example thead th{
-    background-color: #deefff;
+  background-color: #deefff;
+}
+select{
+  font-size: 150%;
+}
+.center {
+   text-align: center;
 }
