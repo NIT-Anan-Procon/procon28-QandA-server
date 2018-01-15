@@ -147,6 +147,8 @@ def read_carelist():
     return cares
 
 def get_care_name(care_id):
+    if care_id is -1:  #care id -1 is the flag of NULL
+        return ""
     cares = read_carelist()
     return cares[care_id]
 
@@ -441,6 +443,8 @@ def _update_interview_state(patient_id, new_state=None, interview_scenario_id=No
         interview_record = x[5]
     if care_ids is None:
         care_ids = x[6]
+        if -1 in care_ids: #care id -1 is the flag of NULL
+            care_ids = []
 
     interview_record_texts = get_interview_record_text(interview_scenario_id, interview_record)
 
