@@ -68,7 +68,8 @@ revgeo = ReverseGeocoder()
 
 @app.route("/")
 def index():
-    return render_template('index.html')
+    return "index"
+    #return render_template('index.html')
 
 @app.route("/callback", methods=['GET'])
 def callback():
