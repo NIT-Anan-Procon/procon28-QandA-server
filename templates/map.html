@@ -56,12 +56,11 @@
         </div>
         <div class="blockb">
             <p><big>応急手当て情報送信欄</p>
-            <p>
-                <select id="listbox_recommend_care" size="4"  style="width:25%;height:45%" multiple>
-                <div class="center">
-
-                </div>
-            </p>
+            
+            <form name="care_select">
+                <select id="listbox_recommend_care" size="4"  style="width:25%;height:45%" multiple onChange="select_care">
+                </select>
+            </form>
             <p>
                 <textarea  rows="7" cols="30" wrap="" id="textarea_comment" style="width:25%;height:20%"></textarea><br>
                 <input type="submit" value="送信" id="button_cue" style="width:15%;height:5%"/>
@@ -75,6 +74,8 @@
 
         <script type="text/javascript" src="static/map_socket.js"></script>
         <script type="text/javascript" src="static/map_marker.js"></script>
+        <script type="text/javascript" src="static/recommend_care.js"></script>
+
         <script type="text/javascript">
 
             var mapCenterLatLng = ['{{ latlng[0] }}', '{{ latlng[1] }}'];

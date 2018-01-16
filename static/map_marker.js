@@ -18,8 +18,8 @@ function encode(text){
 }
 
 var FirestationIcon = L.icon({
-    iconUrl: 'static/img/map/firestation.png',
-    iconRetinaUrl: 'static/img/map/firestation.png',
+    iconUrl: 'static/img/map/filestation01.png',
+    iconRetinaUrl: 'static/img/map/filestation01.png',
     iconSize: [70, 70],
     iconAnchor: [25, 50],
     popupAnchor: [0, -50],
