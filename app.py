@@ -74,14 +74,16 @@ def callback():
 
 @app.route("/address/<latlng>", methods=['GET'])
 def address(latlng):
-    latlng = latlng.split(':') 
-    print(latlng)
-    with urllib.request.urlopen("https://maps.googleapis.com/maps/api/geocode/json?latlng=" + latlng[0] + "," + latlng[1] + "&sensor=false&language=ja") as res:
-        address = res.read().decode("utf-8")
-        address = json.loads(address)['results'][0]['formatted_address'][13:]
-        print(address)
-    return address
-
+    try:
+        latlng = latlng.split(':') 
+        print(latlng)
+        with urllib.request.urlopen("https://maps.googleapis.com/maps/api/geocode/json?latlng=" + latlng[0] + "," + latlng[1] + "&sensor=false&language=ja") as res:
+            address = res.read().decode("utf-8")
+            address = json.loads(address)['results'][0]['formatted_address'][13:]
+            print(address)
+        return address
+    except:
+        return ""
 
 @app.route("/certification/<int:getid>", methods=['GET'])
 def certification(getid):
