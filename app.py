@@ -590,7 +590,12 @@ def end119():
     else:
         return "wrong ID"
 
-
+@socketio.on('recommend care', namespace='/map')
+def test_message(message):
+    patient_id = message['id']
+    recommend_carelist = list(map(int, message['care']))
+    print(patient_id)
+    print(recommend_carelist)
 
 if __name__ == "__main__":
     arg_parser = ArgumentParser(

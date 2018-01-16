@@ -54,3 +54,9 @@ $(function($){
 
 function select_care(){
 }
+
+function submit_cares(){
+    console.log(PATIENT_ID)
+    console.log(last_indices)
+    send_recommend_cares(PATIENT_ID, last_indices)
+}

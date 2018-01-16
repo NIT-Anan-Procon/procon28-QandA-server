@@ -38,3 +38,8 @@ socket.on('delete all markers', function(msgs){
         delete_marker(msg)
     }
 });
+
+
+function send_recommend_cares(patient_id, care_indices){
+    socket.emit('recommend care', {id: patient_id, care:care_indices});
+}

@@ -67,6 +67,7 @@ function add_marker(patient_id, state, latlng, records, cares, address, require_
     )
     .addTo(map)
     .on("click", function(){
+        PATIENT_ID = patient_id
         $("#table_id").text(String(patient_id));
         $("#table_latlng").text(String(latlng));
         $("#table_state").text(String(state));
