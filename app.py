@@ -140,9 +140,13 @@ def read_scenario(scenario=None, scenario_id=None):
             questions.append(row)
     return questions[1:]
 
-def read_carelist():
+def read_carelist(option=''):
+    filename = "scenarios/carelist_v00.csv"
+    if option in "recommend":
+        filename = "scenarios/recommend_carelist.csv"
+
     cares = []
-    with open("scenarios/carelist_v00.csv", newline='') as f:
+    with open(filename, newline='') as f:
         dataReader = csv.reader(f)
         for row in dataReader:
             cares.append(row[1])
@@ -153,9 +157,6 @@ def get_care_name(care_id):
         return ""
     cares = read_carelist()
     return cares[care_id]
-
-def get_all_cares():
-    return read_carelist()
 
 def get_answer(answer):
     if answer == "Y":
@@ -527,8 +528,8 @@ def show_map():
         }
         markers.append(dic)
 
-    print(get_all_cares())
-    return render_template('map.html', latlng=latlng, markers=markers, cares=get_all_cares())
+    print(read_carelist('recommend'))
+    return render_template('map.html', latlng=latlng, markers=markers, cares=read_carelist())
 
 def reset_all_interview(patient_ids):
     socketio.emit('delete all markers',
