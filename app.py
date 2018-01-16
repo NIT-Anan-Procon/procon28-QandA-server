@@ -146,7 +146,7 @@ def read_carelist(option=''):
         filename = "scenarios/recommend_carelist.csv"
 
     cares = []
-    with open(filename, newline='') as f:
+    with open(filename, newline='', encoding="utf-8_sig") as f:
         dataReader = csv.reader(f)
         for row in dataReader:
             cares.append(row[1])
