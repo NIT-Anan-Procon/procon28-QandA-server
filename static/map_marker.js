@@ -17,6 +17,14 @@ function encode(text){
     return answer;
 }
 
+var FirestationIcon = L.icon({
+    iconUrl: 'static/img/map/firestation.png',
+    iconRetinaUrl: 'static/img/map/firestation.png',
+    iconSize: [70, 70],
+    iconAnchor: [25, 50],
+    popupAnchor: [0, -50],
+});
+
 function add_marker(patient_id, state, latlng, records, cares, address, require_encode){
     var icon = "";
     switch (state){

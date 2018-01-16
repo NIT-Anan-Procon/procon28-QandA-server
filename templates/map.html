@@ -77,8 +77,6 @@
         <script type="text/javascript" src="static/map_marker.js"></script>
         <script type="text/javascript">
 
-
-
             var mapCenterLatLng = ['{{ latlng[0] }}', '{{ latlng[1] }}'];
 
             //地図タイルの設定
@@ -96,13 +94,14 @@
             //Marker of the Fire Station
             var marker = L.marker(
                 mapCenterLatLng,
-                { title: "marker-title" }
+                { icon : FirestationIcon },
+                { title: "marker-title" },
             )
             .addTo(map)
             .on("click", function(){
                 alert('現在地：消防署');
             });
-            L.DomUtil.addClass( marker._icon, 'leaflet-marker-icon-color-pink' );
+            //L.DomUtil.addClass( marker._icon, 'leaflet-marker-icon-color-pink' );
 
             function backToCenter(){
                 map.panTo(mapCenterLatLng);
