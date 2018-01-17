@@ -53,23 +53,20 @@ def create_Scenario():
     command += ")"
     return command
 
+def create_RecommendCare():
+    command = "create table RecommendCare("
+    command += "PATIENT_ID integer, "
+    command += "CARE_IDs_RECOMMEND integer[], "
+    command += "COMMENT text"
+    command += ")"
+    return command
 
 def execute():
-    command = create_FS()
-    print(command)
-    cur.execute(command)
-    connection.commit()
-
-    command = create_Scenario()
-    print(command)
-    cur.execute(command)
-    connection.commit()
-
-    command = create_Interview()
-    print(command)
-    cur.execute(command)
-    connection.commit()
-
+    commands = [create_FS(), create_Scenario(), create_Interview(), create_RecommendCare()]
+    for command in commands:
+        print(command)
+        cur.execute(command)
+        connection.commit()
 
 if __name__ == '__main__':
 
