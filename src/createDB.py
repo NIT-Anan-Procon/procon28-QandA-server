@@ -62,7 +62,8 @@ def create_RecommendCare():
     return command
 
 def execute():
-    commands = [create_FS(), create_Scenario(), create_Interview(), create_RecommendCare()]
+    #commands = [create_FS(), create_Scenario(), create_Interview(), create_RecommendCare()]
+    commands = [create_RecommendCare()]
     for command in commands:
         print(command)
         cur.execute(command)

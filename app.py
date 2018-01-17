@@ -370,7 +370,10 @@ def start_interview():
     patient_id = random.randint(1,10)
     add_interview(patient_id, " ", 1, latlng, -1, " ", [], [])
     print(patient_id)
-    return str(patient_id)
+    result = {
+        "patient_id" : patient_id
+    }
+    return jsonify(result)
 
 @app.route("/addinterview")
 def _addinterview():
@@ -443,8 +446,12 @@ def _update_interview_state(patient_id, new_state=None, interview_scenario_id=No
     x = cur.fetchone()
     print(x)
     if x is None:
-        return "UNABLE TO UPDATE:THERE IS NO INTERVIEW WHOSE PATIENT_ID IS " + str(patient_id)
-
+        result = {
+            "RESULT" : "FAILED"
+        }
+        #return "UNABLE TO UPDATE:THERE IS NO INTERVIEW WHOSE PATIENT_ID IS " + str(patient_id)
+        return jsonify(result)
+        
     if new_state is None:
         new_state = x[3]
     if interview_scenario_id is None:
@@ -477,7 +484,11 @@ def _update_interview_state(patient_id, new_state=None, interview_scenario_id=No
     cur.execute(command)
     connection.commit()
 
-    return "change state : " + str(patient_id) + " to " + str(new_state)
+    result = {
+        "RESULT" : "SUCCESS"
+    }
+    #return "change state : " + str(patient_id) + " to " + str(new_state)
+    return jsonify(result)
 
 @app.route("/update_interview", methods=['POST'])
 def update_interview():
