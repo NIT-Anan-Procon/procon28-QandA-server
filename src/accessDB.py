@@ -25,6 +25,10 @@ def valid_list(l):
     else:
         return l
 
+
+array2text = lambda values : "ARRAY[" + ",".join(list(map(str, valid_list(values)))) + "]"
+interviewrecords2text = lambda records : ",".join(records)
+
 def insert_Interview(PATIENT_ID, LATLNG, STATE, INTERVIEW_SCENARIO_ID, INTERVIEW_RECOEDs, CARE_IDs, CARE_IDs_RECOMMEND):
     """
     INTERVIEW_ID : int
@@ -35,8 +39,6 @@ def insert_Interview(PATIENT_ID, LATLNG, STATE, INTERVIEW_SCENARIO_ID, INTERVIEW
     CARE_IDs : [int]
     CARE_IDs_RECOMMEND : [int]
     """
-    array2text = lambda values : "ARRAY[" + ",".join(list(map(str, valid_list(values)))) + "]"
-    interviewrecords2text = lambda records : ",".join(records)
 
     command = 'insert into interview values('
     command += str(PATIENT_ID) + ", "
@@ -85,6 +87,20 @@ def delete_FireStation():
     command = "delete from FireStation where FS_ID = 1"
     return command
 
+def insert_RecommendCare(patient_id, recommend_care, comment):
+    command = "insert into RecommendCare values("
+    command += str(patient_id) + ", "
+    command += array2text(recommend_care) + ", "
+    command += "'" +comment + "'"
+    command += ")"
+    return command
+
+def update_RecommnedCare(patient_id, recommend_care, comment):
+    command = "update recommendcare set "
+    command += "CARE_IDs_RECOMMEND = " + array2text(recommend_care) + ", "
+    command += "comment = '" + comment +"' "  
+    command += "where patient_id = " + str(patient_id)
+    return command
 
 command = insert_Interview(2, "33.934546/134.675097", 1, 2, "record1", [2,3,4], [1,2])
 
