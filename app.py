@@ -507,6 +507,7 @@ def _changestateinterview(new_state):
 def show_map():
     # show map with logged-in FireStation and markers of interviews
     cur.execute("select LATLNG from FireStation where FS_ID = 1")
+    connection.commit()
     line = cur.fetchone()
     latlng = ""
     for row in line:
@@ -594,8 +595,27 @@ def end119():
 def test_message(message):
     patient_id = message['id']
     recommend_carelist = list(map(int, message['care']))
+    comment = message['comment']
     print(patient_id)
     print(recommend_carelist)
+    print(comment)
+
+    if patient_id >= 0:
+        cur.execute("select count(*) as total from recommendcare where patient_id = " + str(patient_id))
+        count = cur.fetchone()[0]
+        command = ""
+        print(count)
+        if count is 0:
+            command = accessDB.insert_RecommendCare(patient_id, recommend_carelist, comment)
+        else:
+            command = accessDB.update_RecommnedCare(patient_id, recommend_carelist, comment)
+
+        print(command)
+        cur.execute(command)
+        connection.commit()
+
+def get_recommendcare(patient_id):
+    cur.execute()
 
 if __name__ == "__main__":
     arg_parser = ArgumentParser(

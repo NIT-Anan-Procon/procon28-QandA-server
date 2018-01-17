@@ -40,6 +40,6 @@ socket.on('delete all markers', function(msgs){
 });
 
 
-function send_recommend_cares(patient_id, care_indices){
-    socket.emit('recommend care', {id: patient_id, care:care_indices});
+function send_recommend_cares(patient_id, care_indices, comment){
+    socket.emit('recommend care', {id: patient_id, care:care_indices, comment:comment});
 }
