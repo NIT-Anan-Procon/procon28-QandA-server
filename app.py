@@ -2,7 +2,7 @@
 
 from __future__ import unicode_literals
 from argparse import ArgumentParser
-from flask import Flask, request, render_template, abort, send_from_directory, render_template
+from flask import Flask, request, render_template, abort, send_from_directory, render_template, jsonify
 from flask_socketio import SocketIO, emit, join_room, leave_room, close_room, rooms, disconnect        
 import json
 import urllib.request
@@ -616,6 +616,22 @@ def test_message(message):
 
 def get_recommendcare(patient_id):
     cur.execute()
+
+@app.route("/get_recommendcare", methods=['POST'])
+def return_recommendcare():
+    bytes_data = request.data
+    str_data = bytes_data.decode('utf-8')
+    json_data = json.loads(str_data)
+    patient_id = json_data["patient_id"]
+
+    cur.execute("select * from recommendcare where patient_id = " + str(patient_id))
+    result = cur.fetchone()
+    print(result)
+    result_recommendcare = {
+        "care_ids_recommend" : result[1],
+        "comment" : result[2]
+    }
+    return jsonify(result_recommendcare)
 
 if __name__ == "__main__":
     arg_parser = ArgumentParser(
