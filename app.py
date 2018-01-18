@@ -22,6 +22,7 @@ sys.path.append('src')
 import accessDB
 from interview import *
 from record import Record
+from databaseconnection import *
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'ask'
@@ -42,6 +43,7 @@ password = ""
 NAMESPACE_MAP = "/map"
 NAMESPACE_INTERVIEW = "/input"
 
+"""
 if NAME == 'localQAserver':
     host = "localhost"
     port = 5432
@@ -60,6 +62,8 @@ elif NAME == 'herokuQAserver':
 print("connect DB")
 print("host="+host+" port="+str(port)+" dbname="+dbname+" user="+user+" password="+password+"")
 connection = psycopg2.connect("host="+host+" port="+str(port)+" dbname="+dbname+" user="+user+" password="+password+"")
+"""
+connection = getDatabaseConnection()
 connection.get_backend_pid()
 cur = connection.cursor()
 
@@ -451,7 +455,7 @@ def _update_interview_state(patient_id, new_state=None, interview_scenario_id=No
         }
         #return "UNABLE TO UPDATE:THERE IS NO INTERVIEW WHOSE PATIENT_ID IS " + str(patient_id)
         return jsonify(result)
-        
+
     if new_state is None:
         new_state = x[3]
     if interview_scenario_id is None:
