@@ -1,3 +1,18 @@
+var map = L.map('map')
+.setView(
+    [33, 135],
+    13
+);
+
+function setMapCenter(mapCenterLatLng){
+    map.setView(mapCenterLatLng, 13)
+}
+
+L.tileLayer(
+    'https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', 
+    { attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors' }
+).addTo(map);
+
 var interviews = new Array();
 var interviewmessages = new Array();
 

@@ -82,18 +82,9 @@
             PATIENT_ID = -1;
 
             var mapCenterLatLng = ['{{ latlng[0] }}', '{{ latlng[1] }}'];
+            setMapCenter(mapCenterLatLng, 13)
 
-            //地図タイルの設定
-            var map = L.map('map')
-            .setView(
-                mapCenterLatLng,
-                13
-            );
 
-            L.tileLayer(
-                'https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', 
-                { attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors' }
-            ).addTo(map);
 
             //Marker of the Fire Station
             var marker = L.marker(
