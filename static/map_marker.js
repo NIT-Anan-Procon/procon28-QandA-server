@@ -1,6 +1,8 @@
 var interviews = new Array();
 var interviewmessages = new Array();
 
+var PATIENT_ID = -1;
+
 function latlng2list(latlng){
     var latlng_list = latlng.split("/");
     var lat = Number(latlng_list[0]);
@@ -18,11 +20,11 @@ function encode(text){
 }
 
 var FirestationIcon = L.icon({
-    iconUrl: 'static/img/map/filestation01.png',
-    iconRetinaUrl: 'static/img/map/filestation01.png',
-    iconSize: [70, 70],
-    iconAnchor: [25, 50],
-    popupAnchor: [0, -50],
+    iconUrl: 'static/img/map/newFS.png',
+    iconRetinaUrl: 'static/img/map/newFS.png',
+    iconSize: [32, 48],
+    iconAnchor: [0, 48],
+    popupAnchor: [0, -70],
 });
 
 function add_marker(patient_id, state, latlng, records, cares, address, require_encode){
@@ -67,6 +69,9 @@ function add_marker(patient_id, state, latlng, records, cares, address, require_
         { title: "marker-title" }
     )
     .addTo(map)
+    .on("dbclick", function(){
+        alert("double clicked");
+    })
     .on("click", function(){
         PATIENT_ID = patient_id
         $("#table_id").text(String(patient_id));
@@ -115,4 +120,12 @@ function beep(){
   var sound = new Audio("data:audio/wav;base64," + base64);
 
   sound.play();
+}
+
+function delete_button(){
+    if (PATIENT_ID >= 0){
+        if (confirm("選択したマーカーを削除してもいいですか？")){
+            send_delete_id(PATIENT_ID)
+        }
+    }
 }
