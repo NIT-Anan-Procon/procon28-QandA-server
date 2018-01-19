@@ -629,12 +629,21 @@ def return_recommendcare():
     json_data = json.loads(str_data)
     patient_id = json_data["patient_id"]
 
-    cur.execute("select * from recommendcare where patient_id = " + str(patient_id))
+    command = "select * from recommendcare where patient_id = " + str(patient_id)
+    print(command)
+    cur.execute(command)
+
+    care_ids_recommend = []
+    comment = ""
     result = cur.fetchone()
-    print(result)
+    if result is not None:
+        print(result)
+        comment = result[2]
+        care_ids_recommend = result[1]
+
     result_recommendcare = {
-        "care_ids_recommend" : result[1],
-        "comment" : result[2]
+        "care_ids_recommend" : care_ids_recommend,
+        "comment" : comment
     }
     return jsonify(result_recommendcare)
 
