@@ -38,7 +38,7 @@ var FirestationIcon = L.icon({
     iconUrl: 'static/img/map/newFS.png',
     iconRetinaUrl: 'static/img/map/newFS.png',
     iconSize: [32, 48],
-    iconAnchor: [0, 48],
+    iconAnchor: [16, 48],
     popupAnchor: [0, -70],
 });
 
