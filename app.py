@@ -360,7 +360,7 @@ def start_interview():
     return jsonify(result)
 
 @app.route("/addinterview")
-def _addinterview():
+def _add_interview():
     global patient_id
     patient_id += 1
     date = "2017-12-23 12:34:56"
@@ -383,11 +383,7 @@ def socketio_delete_interview(patient_id):
         },
         namespace=NAMESPACE_MAP)
 
-@app.route("/deleteinterview")
-def delete_InterviewDB():
-    global patient_id
-    if patient_id == 0:
-        return "nothing to delete"
+def delete_interview(patient_id):
     socketio.start_background_task(target=socketio_delete_interview,
         patient_id=patient_id
     )
@@ -397,6 +393,13 @@ def delete_InterviewDB():
 
     patient_id -= 1
     return "delete marker : " + str(patient_id)
+
+@app.route("/deleteinterview")
+def _delete_Interview():
+    global patient_id
+    if patient_id == 0:
+        return "nothing to delete"
+    return delete_interview(patient_id)
     
 def socketio_change_state_interview(patient_id, state, interview_record_texts, cares):
     socketio.emit('change the state',
@@ -586,7 +589,7 @@ def end119():
     else:
         return "wrong ID"
 
-@socketio.on('recommend care', namespace='/map')
+@socketio.on('recommend care', namespace=NAMESPACE_MAP)
 def test_message(message):
     patient_id = message['id']
     recommend_carelist = list(map(int, message['care']))
@@ -611,6 +614,13 @@ def test_message(message):
 
 def get_recommendcare(patient_id):
     cur.execute()
+
+
+@socketio.on('delete id', namespace=NAMESPACE_MAP)
+def delete_selected_id(message):
+    patient_id = message['id']
+    delete_interview(patient_id)
+
 
 @app.route("/get_recommendcare", methods=['POST'])
 def return_recommendcare():
