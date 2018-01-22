@@ -24,29 +24,29 @@
 
                 <tbody>
                     <tr>
-                        <td>ID</th>
-                        <td id="table_id"></th>
+                        <th width="150">ID</th>
+                        <td width="500" id="table_id"></td>
                     </tr>
                     <tr>
-                        <td>住所</th>
+                        <th>住所</th>
                         <td id="table_address"></th>
                     </tr>
                     <tr>
-                        <td>緯度経度</th>
+                        <th>緯度経度</th>
                         <td id="table_latlng"></th>
                     </tr>
                     <tr>
-                        <td>状態</td>
+                        <th>状態</th>
                         <td id="table_state"></td>
                     </tr>
                     <tr>
-                        <td>問診記録</td>
+                        <th>問診記録</th>
                         <td id="table_records" style="word-wrap:break-word;">
                             <ul id="table_records_list" style="list-style:none;" />
                         </td>
                     </tr>
                     <tr>
-                        <td>応急手当</td>
+                        <th>応急手当</th>
                         <td id="table_cares">
                             <ul id="table_cares_list" style="list-style:none;" />
                         </td>
@@ -102,11 +102,11 @@
                 map.panTo(mapCenterLatLng);
             }
 
-     
+
             var table = document.createElement( 'table' );
 
             document.querySelector('#buttonBackToCenter').onclick=function(){ backToCenter() };
-            
+
             // add marker when it opens
             {% for marker in markers %}
                 add_marker({{ marker.patient_id }}, {{ marker.state }}, '{{ marker.latlng }}', '{{ marker.interview_records }}', '{{ marker.cares }}', '{{ marker.address }}', false)
@@ -116,13 +116,13 @@
             {% for care in cares %}
                 var select = document.getElementById('listbox_recommend_care');
                 var option = document.createElement('option');
-                 
+
                 option.setAttribute('value', String(count));
                 count += 1;
                 option.innerHTML = '{{care}}';
                 select.appendChild(option);
             {% endfor %}
-            
+
         </script>
     </body>
 </html>
