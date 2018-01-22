@@ -1,26 +1,8 @@
 
 import psycopg2
 import os
-"""
-NAME = os.getenv('NAME', 'localQAserver')
-if NAME == 'localQAserver':
-    host = "localhost"
-    port = 5432
-    dbname = "QandA_server"
-    user = "QandA"
-    password = ""
-elif NAME == 'herokuQAserver':
-    host = "ec2-54-83-3-101.compute-1.amazonaws.com"
-    port = 5432
-    dbname = "d5s9osbhq5v6sn"
-    user = "bpnislhqjpweyk"
-    password = "7735ffd9623f5372ad5e8db15cd70bedfc7a9c9edbc033f1b21c419e4f4a1e02"
+from databaseconnection import *
 
-
-connection = psycopg2.connect("host="+host+" port="+str(port)+" dbname="+dbname+" user="+user+" password="+password+"")
-connection.get_backend_pid()
-cur = connection.cursor()
-"""
 def create_FS():
     command = "create table FireStation("
     command += "FS_ID integer, "
@@ -53,44 +35,27 @@ def create_Scenario():
     command += ")"
     return command
 
+def create_RecommendCare():
+    command = "create table RecommendCare("
+    command += "PATIENT_ID integer, "
+    command += "CARE_IDs_RECOMMEND integer[], "
+    command += "COMMENT text"
+    command += ")"
+    return command
 
 def execute():
-    command = create_FS()
-    print(command)
-    cur.execute(command)
-    connection.commit()
-
-    command = create_Scenario()
-    print(command)
-    cur.execute(command)
-    connection.commit()
-
-    command = create_Interview()
-    print(command)
-    cur.execute(command)
-    connection.commit()
-
+    #commands = [create_FS(), create_Scenario(), create_Interview(), create_RecommendCare()]
+    commands = [create_RecommendCare()]
+    for command in commands:
+        print(command)
+        cur.execute(command)
+        connection.commit()
 
 if __name__ == '__main__':
 
-    #NAME = os.getenv('NAME', 'localQAserver')
-    NAME = os.getenv('NAME', 'herokuQAserver')
-    if NAME == 'localQAserver':
-        host = "localhost"
-        port = 5432
-        dbname = "QandA_server"
-        user = "QandA"
-        password = ""
-    elif NAME == 'herokuQAserver':
-        host = "ec2-54-83-3-101.compute-1.amazonaws.com"
-        port = 5432
-        dbname = "d5s9osbhq5v6sn"
-        user = "bpnislhqjpweyk"
-        password = "7735ffd9623f5372ad5e8db15cd70bedfc7a9c9edbc033f1b21c419e4f4a1e02"
+    connection = getDatabaseConnection()
 
-
-    connection = psycopg2.connect("host="+host+" port="+str(port)+" dbname="+dbname+" user="+user+" password="+password+"")
     print(connection.get_backend_pid())
     cur = connection.cursor()
 
-    execute()
+    #execute()

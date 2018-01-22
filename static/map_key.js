@@ -1,4 +1,4 @@
-document.onkeydown = function(e) { 
+/*document.onkeydown = function(e) { 
     var keycode;
 
     // Mozilla(Firefox, NN) and Opera 
@@ -14,8 +14,8 @@ document.onkeydown = function(e) {
 
     keychar = String.fromCharCode(keycode).toUpperCase(); 
 
-    if (keychar == "C") { 
-        alert('C'); 
+    if (e.key == "Delete") { 
+        alert("Delte");
     } 
     // 特殊キーコードの対応については次を参照 
     // 27   Esc 
@@ -37,3 +37,4 @@ document.onkeydown = function(e) {
     //  alert('Escapeキーが押されました'); 
     // } 
 } 
+*/

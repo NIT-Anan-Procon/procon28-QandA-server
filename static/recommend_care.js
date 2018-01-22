@@ -56,7 +56,9 @@ function select_care(){
 }
 
 function submit_cares(){
+    console.log("submit cares")
     console.log(PATIENT_ID)
-    console.log(last_indices)
-    send_recommend_cares(PATIENT_ID, last_indices)
+    //TODO $("#listbox_recommend_care").val()
+    console.log($("#listbox_recommend_care").val())
+    send_recommend_cares(PATIENT_ID, $("#listbox_recommend_care").val(), $("#textarea_comment").val())
 }

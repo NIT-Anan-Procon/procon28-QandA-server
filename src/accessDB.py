@@ -3,20 +3,13 @@ import psycopg2
 from datetime import datetime
 import os
 
-"""
-connection = psycopg2.connect("host=ec2-54-83-3-101.compute-1.amazonaws.com port=5432 dbname=d5s9osbhq5v6sn user=bpnislhqjpweyk password=7735ffd9623f5372ad5e8db15cd70bedfc7a9c9edbc033f1b21c419e4f4a1e02")
-connection.get_backend_pid()
-
-cur = connection.cursor()
-cur.execute("insert into Interview values(1, now(), 33.897949/134.667451, )")
-cur.execute("select ID, NAME from TEST")
-
-for row in cur:
-    print(row[0], row[1])
-
-"""
+from databaseconnection import *
 
 time_now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+def timeNow():
+    return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
 
 def valid_list(l):
     """list must has at least one data"""
@@ -24,6 +17,10 @@ def valid_list(l):
         return [-1]
     else:
         return l
+
+
+array2text = lambda values : "ARRAY[" + ",".join(list(map(str, valid_list(values)))) + "]"
+interviewrecords2text = lambda records : ",".join(records)
 
 def insert_Interview(PATIENT_ID, LATLNG, STATE, INTERVIEW_SCENARIO_ID, INTERVIEW_RECOEDs, CARE_IDs, CARE_IDs_RECOMMEND):
     """
@@ -35,8 +32,6 @@ def insert_Interview(PATIENT_ID, LATLNG, STATE, INTERVIEW_SCENARIO_ID, INTERVIEW
     CARE_IDs : [int]
     CARE_IDs_RECOMMEND : [int]
     """
-    array2text = lambda values : "ARRAY[" + ",".join(list(map(str, valid_list(values)))) + "]"
-    interviewrecords2text = lambda records : ",".join(records)
 
     command = 'insert into interview values('
     command += str(PATIENT_ID) + ", "
@@ -85,35 +80,34 @@ def delete_FireStation():
     command = "delete from FireStation where FS_ID = 1"
     return command
 
+def insert_RecommendCare(patient_id, recommend_care, comment):
+    command = "insert into RecommendCare values("
+    command += str(patient_id) + ", "
+    command += array2text(recommend_care) + ", "
+    command += "'" +comment + "'"
+    command += ")"
+    return command
+
+def update_RecommnedCare(patient_id, recommend_care, comment):
+    command = "update recommendcare set "
+    command += "CARE_IDs_RECOMMEND = " + array2text(recommend_care) + ", "
+    command += "comment = '" + comment +"' "  
+    command += "where patient_id = " + str(patient_id)
+    return command
 
 command = insert_Interview(2, "33.934546/134.675097", 1, 2, "record1", [2,3,4], [1,2])
 
 if __name__ == '__main__':
 
-    NAME = os.getenv('NAME', 'localQAserver')
-    if NAME == 'localQAserver':
-        host = "localhost"
-        port = 5432
-        dbname = "QandA_server"
-        user = "QandA"
-        password = ""
-    elif NAME == 'herokuQAserver':
-        host = "ec2-54-83-3-101.compute-1.amazonaws.com"
-        port = 5432
-        dbname = "d5s9osbhq5v6sn"
-        user = "bpnislhqjpweyk"
-        password = "7735ffd9623f5372ad5e8db15cd70bedfc7a9c9edbc033f1b21c419e4f4a1e02"
-
-
-    print(host)
-    connection = psycopg2.connect("host="+host+" port="+str(port)+" dbname="+dbname+" user="+user+" password="+password+"")
+    connection = getDatabaseConnection()
     connection.get_backend_pid()
     cur = connection.cursor()
 
     command = insert_Scenario(0, "'ill_1003.csv'")
-    #command = insert_Scenario(1, "'kega_1003.csv'")
     command = "select * from scenario"
+    """
     print(command)
     cur.execute(command)
     print(cur.fetchall())
     connection.commit()
+    """
