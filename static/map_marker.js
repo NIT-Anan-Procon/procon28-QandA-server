@@ -88,6 +88,9 @@ function add_marker(patient_id, state, latlng, records, cares, address, require_
         alert("double clicked");
     })
     .on("click", function(){
+        if (PATIENT_ID != patient_id){
+            clearSelection();
+        }
         PATIENT_ID = patient_id
         $("#table_id").text(String(patient_id));
         $("#table_latlng").text(String(latlng));
@@ -114,7 +117,6 @@ function add_marker(patient_id, state, latlng, records, cares, address, require_
             li.appendChild(document.createTextNode(record));
             ul.appendChild(li);
         }
-
     });
     L.DomUtil.addClass( marker._icon, icon );
 
