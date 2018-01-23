@@ -41,8 +41,55 @@ var FirestationIcon = L.icon({
     iconAnchor: [16, 48],
     popupAnchor: [0, -70],
 });
+/*
+var markerIconUrls = [
+    "static/img/map/marker/icon_blue.png",
+    "static/img/map/marker/icon_yellow.png",
+    "static/img/map/marker/icon_red.png"
+];
+var markerSelectedIconUrls = [
+    "static/img/map/marker/Sicon_blue.png",
+    "static/img/map/marker/Sicon_yellow.png",
+    "static/img/map/marker/Sicon_red.png"
+];
+*/
+var markerIconUrls = [
+    "static/img/map/marker/marker/01.png",
+    "static/img/map/marker/marker/03.png",
+    "static/img/map/marker/marker/02.png"
+];
+var markerSelectedIconUrls = [
+    "static/img/map/marker/marker/04.png",
+    "static/img/map/marker/marker/06.png",
+    "static/img/map/marker/marker/05.png"
+];
+var markerIcons = new Array();
+var markerSelectedIcons = new Array();
+
+for (var i = 0; i < markerIconUrls.length; i++){
+    var markerIcon = L.icon({
+        iconUrl: markerIconUrls[i],
+        iconRetinaUrl: markerIconUrls[i],
+        iconSize: [32, 48],
+        iconAnchor: [16, 48],
+        popupAnchor: [0, -70],
+    });
+    markerIcons.push(markerIcon);
+
+    var markerSelectedIcon = L.icon({
+        iconUrl: markerSelectedIconUrls[i],
+        iconRetinaUrl: markerSelectedIconUrls[i],
+        iconSize: [32, 48],
+        iconAnchor: [16, 48],
+        popupAnchor: [0, -70],
+    });
+    markerSelectedIcons.push(markerSelectedIcon);
+}
 
 function add_marker(patient_id, state, latlng, records, cares, address, require_encode){
+    var markericon = markerIcons[state-1];
+    var markerselectedicon = markerSelectedIcons[state-1];
+
     var icon = "";
     switch (state){
         case 1:
@@ -78,9 +125,10 @@ function add_marker(patient_id, state, latlng, records, cares, address, require_
     } else {
         records_ = records.split(":");
     }
-
+    
     var marker = L.marker(
         latlng2list(latlng),
+        { icon : markericon }, 
         { title: "marker-title" }
     )
     .addTo(map)
@@ -88,6 +136,13 @@ function add_marker(patient_id, state, latlng, records, cares, address, require_
         alert("double clicked");
     })
     .on("click", function(){
+        for (let i in interviews){
+            state = interviewmessages[i]["state"]
+            icon = markerIcons[state-1]
+            m = interviews[i]
+            m.setIcon(icon)
+        }
+
         if (PATIENT_ID != patient_id){
             clearSelection();
         }
@@ -117,8 +172,9 @@ function add_marker(patient_id, state, latlng, records, cares, address, require_
             li.appendChild(document.createTextNode(record));
             ul.appendChild(li);
         }
+
+        marker.setIcon(markerselectedicon);
     });
-    L.DomUtil.addClass( marker._icon, icon );
 
     interviews[patient_id] = marker
     interviewmessages[patient_id] = {"patient_id":patient_id, "state":state, "latlng":latlng, "records":text};
