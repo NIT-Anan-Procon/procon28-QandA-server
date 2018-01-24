@@ -41,35 +41,29 @@ var FirestationIcon = L.icon({
     iconAnchor: [16, 48],
     popupAnchor: [0, -70],
 });
-/*
+
 var markerIconUrls = [
-    "static/img/map/marker/icon_blue.png",
-    "static/img/map/marker/icon_yellow.png",
-    "static/img/map/marker/icon_red.png"
+    "icon_blue.png",
+    "icon_yellow.png",
+    "icon_red.png"
 ];
 var markerSelectedIconUrls = [
-    "static/img/map/marker/Sicon_blue.png",
-    "static/img/map/marker/Sicon_yellow.png",
-    "static/img/map/marker/Sicon_red.png"
+    "Sicon_blue.png",
+    "Sicon_yellow.png",
+    "Sicon_red.png"
 ];
-*/
-var markerIconUrls = [
-    "static/img/map/marker/marker/01.png",
-    "static/img/map/marker/marker/03.png",
-    "static/img/map/marker/marker/02.png"
-];
-var markerSelectedIconUrls = [
-    "static/img/map/marker/marker/04.png",
-    "static/img/map/marker/marker/06.png",
-    "static/img/map/marker/marker/05.png"
-];
+
 var markerIcons = new Array();
 var markerSelectedIcons = new Array();
 
 for (var i = 0; i < markerIconUrls.length; i++){
+    var dir = "static/img/map/marker/"
+    var iconurl = dir + markerIconUrls[i]
+    var siconurl = dir + markerSelectedIconUrls[i]
+
     var markerIcon = L.icon({
-        iconUrl: markerIconUrls[i],
-        iconRetinaUrl: markerIconUrls[i],
+        iconUrl: iconurl,
+        iconRetinaUrl: iconurl,
         iconSize: [32, 48],
         iconAnchor: [16, 48],
         popupAnchor: [0, -70],
@@ -77,8 +71,8 @@ for (var i = 0; i < markerIconUrls.length; i++){
     markerIcons.push(markerIcon);
 
     var markerSelectedIcon = L.icon({
-        iconUrl: markerSelectedIconUrls[i],
-        iconRetinaUrl: markerSelectedIconUrls[i],
+        iconUrl: siconurl,
+        iconRetinaUrl: siconurl,
         iconSize: [32, 48],
         iconAnchor: [16, 48],
         popupAnchor: [0, -70],
