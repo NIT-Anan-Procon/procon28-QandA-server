@@ -517,6 +517,7 @@ def show_map():
     markers = []
 
     for row in line:
+        print("state : " + str(row[2]))
         dic = {
             'patient_id' : row[0],
             'latlng' : row[1],

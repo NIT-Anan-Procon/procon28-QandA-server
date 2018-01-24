@@ -131,8 +131,8 @@ function add_marker(patient_id, state, latlng, records, cares, address, require_
     })
     .on("click", function(){
         for (let i in interviews){
-            state = interviewmessages[i]["state"]
-            icon = markerIcons[state-1]
+            var state_ = interviewmessages[i]["state"]
+            icon = markerIcons[state_-1]
             m = interviews[i]
             m.setIcon(icon)
         }
@@ -141,9 +141,19 @@ function add_marker(patient_id, state, latlng, records, cares, address, require_
             clearSelection();
         }
         PATIENT_ID = patient_id
+
+        var latlnglist = String(latlng).split("/")
         $("#table_id").text(String(patient_id));
-        $("#table_latlng").text(String(latlng));
-        $("#table_state").text(String(state));
+        $("#table_latlng").text("北緯"+latlnglist[0] + "：東経"+latlnglist[1]);
+        var statetext = ""
+        if (state == 1){
+            statetext = "問診開始"
+        } else if (state == 2){
+            statetext = "問診終了・通報する可能性あり"
+        } else if (state == 3){
+            statetext = "119番通報中"
+        }
+        $("#table_state").text(String(statetext));
         $("#table_address").text(address);
 
         var ul = document.getElementById("table_cares_list");
