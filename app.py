@@ -2,7 +2,7 @@
 
 from __future__ import unicode_literals
 from argparse import ArgumentParser
-from flask import Flask, request, render_template, abort, send_from_directory, render_template
+from flask import Flask, request, render_template, abort, send_from_directory, render_template, jsonify
 from flask_socketio import SocketIO, emit, join_room, leave_room, close_room, rooms, disconnect        
 import json
 import urllib.request
@@ -22,6 +22,7 @@ sys.path.append('src')
 import accessDB
 from interview import *
 from record import Record
+from databaseconnection import *
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'ask'
@@ -42,31 +43,14 @@ password = ""
 NAMESPACE_MAP = "/map"
 NAMESPACE_INTERVIEW = "/input"
 
-if NAME == 'localQAserver':
-    host = "localhost"
-    port = 5432
-    dbname = "qadb"
-    user = "tomoya"
-    password = ""
-elif NAME == 'herokuQAserver':
-    host = "ec2-54-83-3-101.compute-1.amazonaws.com"
-    port = 5432
-    dbname = "d5s9osbhq5v6sn"
-    user = "bpnislhqjpweyk"
-    password = "7735ffd9623f5372ad5e8db15cd70bedfc7a9c9edbc033f1b21c419e4f4a1e02"
-
-
-
-print("connect DB")
-print("host="+host+" port="+str(port)+" dbname="+dbname+" user="+user+" password="+password+"")
-connection = psycopg2.connect("host="+host+" port="+str(port)+" dbname="+dbname+" user="+user+" password="+password+"")
+connection = getDatabaseConnection()
 connection.get_backend_pid()
 cur = connection.cursor()
 
 @app.route("/")
 def index():
-    return "index"
-    #return render_template('index.html')
+    #return "index"
+    return render_template('index.html')
 
 @app.route("/callback", methods=['GET'])
 def callback():
@@ -146,7 +130,7 @@ def read_carelist(option=''):
         filename = "scenarios/recommend_carelist.csv"
 
     cares = []
-    with open(filename, newline='') as f:
+    with open(filename, newline='', encoding="utf-8_sig") as f:
         dataReader = csv.reader(f)
         for row in dataReader:
             cares.append(row[1])
@@ -370,10 +354,13 @@ def start_interview():
     patient_id = random.randint(1,10)
     add_interview(patient_id, " ", 1, latlng, -1, " ", [], [])
     print(patient_id)
-    return str(patient_id)
+    result = {
+        "patient_id" : patient_id
+    }
+    return jsonify(result)
 
 @app.route("/addinterview")
-def _addinterview():
+def _add_interview():
     global patient_id
     patient_id += 1
     date = "2017-12-23 12:34:56"
@@ -396,11 +383,7 @@ def socketio_delete_interview(patient_id):
         },
         namespace=NAMESPACE_MAP)
 
-@app.route("/deleteinterview")
-def delete_InterviewDB():
-    global patient_id
-    if patient_id == 0:
-        return "nothing to delete"
+def delete_interview(patient_id):
     socketio.start_background_task(target=socketio_delete_interview,
         patient_id=patient_id
     )
@@ -410,6 +393,13 @@ def delete_InterviewDB():
 
     patient_id -= 1
     return "delete marker : " + str(patient_id)
+
+@app.route("/deleteinterview")
+def _delete_Interview():
+    global patient_id
+    if patient_id == 0:
+        return "nothing to delete"
+    return delete_interview(patient_id)
     
 def socketio_change_state_interview(patient_id, state, interview_record_texts, cares):
     socketio.emit('change the state',
@@ -443,7 +433,11 @@ def _update_interview_state(patient_id, new_state=None, interview_scenario_id=No
     x = cur.fetchone()
     print(x)
     if x is None:
-        return "UNABLE TO UPDATE:THERE IS NO INTERVIEW WHOSE PATIENT_ID IS " + str(patient_id)
+        result = {
+            "RESULT" : "FAILED"
+        }
+        #return "UNABLE TO UPDATE:THERE IS NO INTERVIEW WHOSE PATIENT_ID IS " + str(patient_id)
+        return jsonify(result)
 
     if new_state is None:
         new_state = x[3]
@@ -477,7 +471,11 @@ def _update_interview_state(patient_id, new_state=None, interview_scenario_id=No
     cur.execute(command)
     connection.commit()
 
-    return "change state : " + str(patient_id) + " to " + str(new_state)
+    result = {
+        "RESULT" : "SUCCESS"
+    }
+    #return "change state : " + str(patient_id) + " to " + str(new_state)
+    return jsonify(result)
 
 @app.route("/update_interview", methods=['POST'])
 def update_interview():
@@ -507,6 +505,7 @@ def _changestateinterview(new_state):
 def show_map():
     # show map with logged-in FireStation and markers of interviews
     cur.execute("select LATLNG from FireStation where FS_ID = 1")
+    connection.commit()
     line = cur.fetchone()
     latlng = ""
     for row in line:
@@ -518,6 +517,7 @@ def show_map():
     markers = []
 
     for row in line:
+        print("state : " + str(row[2]))
         dic = {
             'patient_id' : row[0],
             'latlng' : row[1],
@@ -590,7 +590,63 @@ def end119():
     else:
         return "wrong ID"
 
+@socketio.on('recommend care', namespace=NAMESPACE_MAP)
+def test_message(message):
+    patient_id = message['id']
+    recommend_carelist = list(map(int, message['care']))
+    comment = message['comment']
+    print(patient_id)
+    print(recommend_carelist)
+    print(comment)
 
+    if patient_id >= 0:
+        cur.execute("select count(*) as total from recommendcare where patient_id = " + str(patient_id))
+        count = cur.fetchone()[0]
+        command = ""
+        print(count)
+        if count is 0:
+            command = accessDB.insert_RecommendCare(patient_id, recommend_carelist, comment)
+        else:
+            command = accessDB.update_RecommnedCare(patient_id, recommend_carelist, comment)
+
+        print(command)
+        cur.execute(command)
+        connection.commit()
+
+def get_recommendcare(patient_id):
+    cur.execute()
+
+
+@socketio.on('delete id', namespace=NAMESPACE_MAP)
+def delete_selected_id(message):
+    patient_id = message['id']
+    delete_interview(patient_id)
+
+
+@app.route("/get_recommendcare", methods=['POST'])
+def return_recommendcare():
+    bytes_data = request.data
+    str_data = bytes_data.decode('utf-8')
+    json_data = json.loads(str_data)
+    patient_id = json_data["patient_id"]
+
+    command = "select * from recommendcare where patient_id = " + str(patient_id)
+    print(command)
+    cur.execute(command)
+
+    care_ids_recommend = []
+    comment = ""
+    result = cur.fetchone()
+    if result is not None:
+        print(result)
+        comment = result[2]
+        care_ids_recommend = result[1]
+
+    result_recommendcare = {
+        "care_ids_recommend" : care_ids_recommend,
+        "comment" : comment
+    }
+    return jsonify(result_recommendcare)
 
 if __name__ == "__main__":
     arg_parser = ArgumentParser(

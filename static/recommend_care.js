@@ -54,3 +54,18 @@ $(function($){
 
 function select_care(){
 }
+
+function submit_cares(){
+    console.log("submit cares")
+    console.log(PATIENT_ID)
+    //TODO $("#listbox_recommend_care").val()
+    console.log($("#listbox_recommend_care").val())
+    send_recommend_cares(PATIENT_ID, $("#listbox_recommend_care").val(), $("#textarea_comment").val())
+}
+
+function clearSelection(){
+    for(var i = 0; i < s_o.length; i++){
+        s_o[i].selected = false;
+    } 
+    last_indices = new Array();
+}
